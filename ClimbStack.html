@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ClimbStack — Structured DSA Sheets & Interview Prep</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0F2E24;
+    --bg-panel:#153A2C;
+    --bg-panel-2:#1C4936;
+    --text:#F4F1E8;
+    --text-muted:#9FBDAE;
+    --text-faint:#6F8F80;
+    --accent:#FF6B4A;
+    --accent-dim:#3A241E;
+    --accent-2:#FFC857;
+    --easy:#5FBF8E;
+    --medium:#FFC857;
+    --hard:#FF6B4A;
+    --border:rgba(244,241,232,0.11);
+    --border-strong:rgba(244,241,232,0.2);
+    --font-display:'Space Grotesk',sans-serif;
+    --font-body:'Inter',sans-serif;
+    --font-mono:'JetBrains Mono',monospace;
+    --radius:10px;
+  }
+
+  *{margin:0;padding:0;box-sizing:border-box;}
+
+  html{scroll-behavior:smooth;}
+
+  body{
+    background:var(--bg);
+    background-image:
+      radial-gradient(ellipse 900px 500px at 15% -5%, rgba(255,107,74,0.10), transparent 60%),
+      radial-gradient(ellipse 700px 500px at 100% 10%, rgba(255,200,87,0.06), transparent 55%);
+    color:var(--text);
+    font-family:var(--font-body);
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+
+  a{color:inherit;text-decoration:none;}
+  ul{list-style:none;}
+  img,svg{display:block;max-width:100%;}
+  button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit;}
+
+  .wrap{
+    max-width:1180px;
+    margin:0 auto;
+    padding:0 32px;
+  }
+
+  ::selection{background:var(--accent);color:var(--bg);}
+
+  /* ---------- chalk texture filter ---------- */
+  .chalk{ filter:url(#chalkTexture); }
+
+  /* ---------- nav ---------- */
+  header{
+    position:sticky;top:0;z-index:100;
+    background:rgba(15,46,36,0.86);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--border);
+  }
+  nav{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:18px 32px;
+    max-width:1180px;margin:0 auto;
+  }
+  .logo{
+    display:flex;align-items:center;gap:10px;
+    font-family:var(--font-display);
+    font-weight:700;font-size:20px;letter-spacing:-0.01em;
+  }
+  .logo-mark{
+    width:26px;height:26px;flex-shrink:0;
+  }
+  .nav-links{
+    display:flex;align-items:center;gap:34px;
+    font-size:14.5px;font-weight:500;color:var(--text-muted);
+  }
+  .nav-links a{transition:color .15s ease;position:relative;}
+  .nav-links a:hover{color:var(--text);}
+  .nav-cta{display:flex;align-items:center;gap:18px;}
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:8px;
+    padding:11px 20px;
+    border-radius:7px;
+    font-weight:600;font-size:14.5px;
+    transition:transform .15s ease, box-shadow .15s ease, background .15s ease;
+    white-space:nowrap;
+  }
+  .btn-primary{
+    background:var(--accent);color:#241108;
+    box-shadow:0 1px 0 rgba(0,0,0,0.15), 0 6px 20px -8px rgba(255,107,74,0.7);
+  }
+  .btn-primary:hover{transform:translateY(-1px);box-shadow:0 10px 24px -8px rgba(255,107,74,0.85);}
+  .btn-ghost{color:var(--text-muted);font-weight:500;}
+  .btn-ghost:hover{color:var(--text);}
+  .btn-outline{
+    border:1px solid var(--border-strong);
+    color:var(--text);
+  }
+  .btn-outline:hover{border-color:var(--accent-2);color:var(--accent-2);}
+  .menu-toggle{display:none;}
+
+  /* ---------- hero ---------- */
+  .hero{
+    padding:96px 0 60px;
+    position:relative;
+  }
+  .hero-grid{
+    display:grid;
+    grid-template-columns:1.05fr 0.95fr;
+    gap:56px;
+    align-items:center;
+  }
+  .eyebrow{
+    display:inline-flex;align-items:center;gap:8px;
+    font-family:var(--font-mono);
+    font-size:12.5px;letter-spacing:0.06em;text-transform:uppercase;
+    color:var(--accent-2);
+    background:rgba(255,200,87,0.08);
+    border:1px solid rgba(255,200,87,0.25);
+    padding:6px 12px;border-radius:100px;
+    margin-bottom:22px;
+  }
+  .eyebrow::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--accent-2);}
+  h1{
+    font-family:var(--font-display);
+    font-size:clamp(38px,4.6vw,58px);
+    font-weight:700;
+    line-height:1.05;
+    letter-spacing:-0.02em;
+    margin-bottom:22px;
+  }
+  h1 .hl{color:var(--accent);position:relative;}
+  .hero p.lead{
+    font-size:18px;
+    color:var(--text-muted);
+    max-width:480px;
+    margin-bottom:34px;
+  }
+  .hero-actions{display:flex;align-items:center;gap:16px;margin-bottom:44px;flex-wrap:wrap;}
+  .hero-stats{
+    display:flex;gap:36px;flex-wrap:wrap;
+    padding-top:28px;border-top:1px solid var(--border);
+  }
+  .stat-num{
+    font-family:var(--font-mono);
+    font-size:23px;font-weight:600;color:var(--text);
+    display:block;
+  }
+  .stat-label{font-size:13px;color:var(--text-faint);margin-top:2px;}
+
+  /* ---------- signature: the staircase ---------- */
+  .stair-wrap{
+    position:relative;
+    height:460px;
+    display:flex;align-items:flex-end;justify-content:center;
+  }
+  .stair-svg{width:100%;height:100%;overflow:visible;}
+  .rung-label{
+    font-family:var(--font-mono);
+    font-size:12px;fill:var(--text-muted);
+  }
+  .rung-label.done{fill:var(--bg);font-weight:600;}
+  .climber{
+    filter:drop-shadow(0 8px 14px rgba(255,107,74,0.5));
+  }
+
+  /* ---------- section shared ---------- */
+  section{padding:100px 0;}
+  .section-head{
+    max-width:600px;
+    margin-bottom:52px;
+  }
+  .section-tag{
+    font-family:var(--font-mono);
+    font-size:12.5px;letter-spacing:0.06em;text-transform:uppercase;
+    color:var(--accent-2);margin-bottom:14px;display:block;
+  }
+  h2{
+    font-family:var(--font-display);
+    font-size:clamp(28px,3.2vw,38px);
+    font-weight:700;letter-spacing:-0.015em;
+    margin-bottom:14px;
+  }
+  .section-head p{color:var(--text-muted);font-size:16.5px;}
+
+  /* ---------- topics ---------- */
+  .topics-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:1px;
+    background:var(--border);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    overflow:hidden;
+  }
+  .topic-card{
+    background:var(--bg-panel);
+    padding:28px 24px;
+    transition:background .2s ease;
+    opacity:0;transform:translateY(14px);
+  }
+  .topic-card.in{opacity:1;transform:translateY(0);transition:opacity .5s ease, transform .5s ease, background .2s ease;}
+  .topic-card:hover{background:var(--bg-panel-2);}
+  .topic-icon{
+    width:38px;height:38px;
+    margin-bottom:18px;
+    color:var(--accent-2);
+  }
+  .topic-card h3{
+    font-family:var(--font-display);
+    font-size:17px;font-weight:600;margin-bottom:6px;
+  }
+  .topic-card p{font-size:13.5px;color:var(--text-faint);line-height:1.5;}
+  .topic-count{
+    display:inline-block;margin-top:14px;
+    font-family:var(--font-mono);font-size:11.5px;color:var(--text-faint);
+    border:1px solid var(--border);padding:3px 8px;border-radius:100px;
+  }
+
+  /* ---------- sheet / tracker ---------- */
+  .sheet-panel{
+    background:var(--bg-panel);
+    border:1px solid var(--border);
+    border-radius:14px;
+    overflow:hidden;
+  }
+  .sheet-top{
+    padding:26px 30px;
+    display:flex;align-items:center;justify-content:space-between;
+    flex-wrap:wrap;gap:18px;
+    border-bottom:1px solid var(--border);
+  }
+  .sheet-title{font-family:var(--font-display);font-weight:600;font-size:17px;}
+  .sheet-sub{font-size:13px;color:var(--text-faint);margin-top:4px;}
+  .progress-block{display:flex;align-items:center;gap:14px;min-width:220px;}
+  .progress-track{
+    flex:1;height:8px;border-radius:100px;
+    background:rgba(244,241,232,0.08);
+    overflow:hidden;
+  }
+  .progress-fill{
+    height:100%;border-radius:100px;
+    background:linear-gradient(90deg,var(--accent-2),var(--accent));
+    width:0%;
+    transition:width .45s cubic-bezier(.4,0,.2,1);
+  }
+  .progress-text{
+    font-family:var(--font-mono);font-size:13px;color:var(--accent-2);
+    white-space:nowrap;
+  }
+  .sheet-row{
+    display:grid;
+    grid-template-columns:36px 1fr 110px 130px 90px;
+    align-items:center;
+    gap:14px;
+    padding:15px 30px;
+    border-bottom:1px solid var(--border);
+    font-size:14.5px;
+    transition:background .15s ease;
+  }
+  .sheet-row:last-child{border-bottom:none;}
+  .sheet-row:hover{background:rgba(244,241,232,0.03);}
+  .sheet-row.head{
+    font-family:var(--font-mono);font-size:11.5px;color:var(--text-faint);
+    text-transform:uppercase;letter-spacing:0.05em;
+    padding-top:14px;padding-bottom:14px;
+  }
+  .chk{
+    width:19px;height:19px;border-radius:5px;
+    border:1.5px solid var(--border-strong);
+    display:flex;align-items:center;justify-content:center;
+    transition:all .15s ease;
+  }
+  .chk svg{width:12px;height:12px;opacity:0;transition:opacity .12s ease;stroke:var(--bg);}
+  .chk.checked{background:var(--easy);border-color:var(--easy);}
+  .chk.checked svg{opacity:1;}
+  .prob-name{font-weight:500;}
+  .prob-name.checked{color:var(--text-faint);text-decoration:line-through;text-decoration-color:var(--text-faint);}
+  .tag{
+    font-family:var(--font-mono);font-size:11.5px;
+    color:var(--text-muted);
+    background:rgba(244,241,232,0.06);
+    padding:4px 9px;border-radius:100px;
+    display:inline-block;width:fit-content;
+  }
+  .diff{
+    font-family:var(--font-mono);font-size:11.5px;font-weight:600;
+    padding:4px 10px;border-radius:100px;width:fit-content;
+  }
+  .diff.easy{color:var(--easy);background:rgba(95,191,142,0.12);}
+  .diff.medium{color:var(--medium);background:rgba(255,200,87,0.12);}
+  .diff.hard{color:var(--hard);background:rgba(255,107,74,0.12);}
+  .sheet-footer{
+    padding:20px 30px;
+    display:flex;align-items:center;justify-content:space-between;
+    flex-wrap:wrap;gap:14px;
+  }
+  .sheet-footer span{font-size:13px;color:var(--text-faint);}
+
+  /* ---------- stat band ---------- */
+  .stat-band{
+    padding:64px 0;
+    border-top:1px solid var(--border);
+    border-bottom:1px solid var(--border);
+  }
+  .stat-band .wrap{
+    display:grid;grid-template-columns:repeat(4,1fr);gap:32px;
+  }
+  .band-item{text-align:left;}
+  .band-num{
+    font-family:var(--font-mono);font-weight:600;
+    font-size:clamp(28px,3vw,36px);
+    color:var(--accent-2);
+  }
+  .band-label{color:var(--text-muted);font-size:14px;margin-top:6px;}
+
+  /* ---------- courses ---------- */
+  .course-grid{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:24px;
+  }
+  .course-card{
+    background:var(--bg-panel);
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:32px 28px;
+    display:flex;flex-direction:column;
+    transition:border-color .2s ease, transform .2s ease;
+  }
+  .course-card:hover{border-color:var(--border-strong);transform:translateY(-3px);}
+  .course-card.featured{border-color:var(--accent);position:relative;}
+  .featured-badge{
+    position:absolute;top:-12px;left:28px;
+    background:var(--accent);color:#241108;
+    font-size:11.5px;font-weight:700;
+    padding:4px 12px;border-radius:100px;
+    font-family:var(--font-mono);
+  }
+  .course-level{
+    font-family:var(--font-mono);font-size:11.5px;color:var(--text-faint);
+    text-transform:uppercase;letter-spacing:0.05em;margin-bottom:14px;
+  }
+  .course-card h3{
+    font-family:var(--font-display);font-size:21px;font-weight:600;margin-bottom:10px;
+  }
+  .course-card p.desc{font-size:14px;color:var(--text-muted);margin-bottom:22px;flex-grow:0;}
+  .course-feats{margin-bottom:26px;flex-grow:1;}
+  .course-feats li{
+    font-size:13.5px;color:var(--text-muted);
+    display:flex;align-items:center;gap:9px;margin-bottom:10px;
+  }
+  .course-feats svg{width:14px;height:14px;color:var(--easy);flex-shrink:0;}
+  .course-price{
+    display:flex;align-items:baseline;gap:8px;margin-bottom:18px;
+    font-family:var(--font-display);
+  }
+  .course-price .amt{font-size:26px;font-weight:700;}
+  .course-price .per{font-size:13px;color:var(--text-faint);}
+  .course-price .free{color:var(--easy);font-size:26px;font-weight:700;}
+
+  /* ---------- testimonials ---------- */
+  .testi-grid{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:24px;
+  }
+  .testi-card{
+    background:var(--bg-panel);
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:28px;
+  }
+  .testi-quote{
+    font-size:14.5px;line-height:1.65;color:var(--text);margin-bottom:22px;
+  }
+  .testi-quote::before{content:'"';color:var(--accent);font-family:var(--font-display);}
+  .testi-person{display:flex;align-items:center;gap:12px;}
+  .avatar{
+    width:38px;height:38px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    font-family:var(--font-display);font-weight:700;font-size:14px;
+    color:var(--bg);
+    flex-shrink:0;
+  }
+  .p-name{font-size:13.5px;font-weight:600;}
+  .p-role{font-size:12px;color:var(--text-faint);}
+
+  /* ---------- final cta ---------- */
+  .final-cta{
+    text-align:center;
+    padding:110px 0;
+  }
+  .final-cta h2{font-size:clamp(30px,4vw,44px);max-width:640px;margin:0 auto 18px;}
+  .final-cta p{color:var(--text-muted);font-size:17px;margin-bottom:36px;}
+  .cta-row{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;}
+
+  /* ---------- footer ---------- */
+  footer{
+    border-top:1px solid var(--border);
+    padding:64px 0 32px;
+  }
+  .footer-grid{
+    display:grid;grid-template-columns:1.4fr repeat(3,1fr);gap:40px;
+    margin-bottom:52px;
+  }
+  .footer-brand p{color:var(--text-faint);font-size:13.5px;margin-top:14px;max-width:260px;}
+  .footer-col h4{
+    font-family:var(--font-mono);font-size:12px;text-transform:uppercase;letter-spacing:0.05em;
+    color:var(--text-faint);margin-bottom:16px;
+  }
+  .footer-col li{margin-bottom:10px;}
+  .footer-col a{font-size:14px;color:var(--text-muted);transition:color .15s ease;}
+  .footer-col a:hover{color:var(--accent-2);}
+  .footer-bottom{
+    display:flex;justify-content:space-between;align-items:center;
+    padding-top:28px;border-top:1px solid var(--border);
+    font-size:13px;color:var(--text-faint);flex-wrap:wrap;gap:12px;
+  }
+
+  /* ---------- reveal ---------- */
+  .reveal{opacity:0;transform:translateY(18px);transition:opacity .6s ease, transform .6s ease;}
+  .reveal.in{opacity:1;transform:translateY(0);}
+
+  @media (prefers-reduced-motion:reduce){
+    *{animation:none!important;transition:none!important;}
+  }
+
+  /* ---------- responsive ---------- */
+  @media (max-width:980px){
+    .hero-grid{grid-template-columns:1fr;}
+    .stair-wrap{height:320px;order:-1;}
+    .topics-grid{grid-template-columns:repeat(2,1fr);}
+    .course-grid{grid-template-columns:1fr;}
+    .testi-grid{grid-template-columns:1fr;}
+    .stat-band .wrap{grid-template-columns:repeat(2,1fr);}
+    .footer-grid{grid-template-columns:1fr 1fr;}
+    .sheet-row{grid-template-columns:30px 1fr 90px;}
+    .sheet-row .col-tag{display:none;}
+  }
+  @media (max-width:720px){
+    .nav-links{display:none;}
+    .wrap{padding:0 20px;}
+    .hero{padding:56px 0 40px;}
+    .hero-actions{flex-direction:column;align-items:stretch;}
+    .hero-stats{gap:24px;}
+    .topics-grid{grid-template-columns:1fr 1fr;}
+    .footer-grid{grid-template-columns:1fr;}
+    .sheet-top{padding:20px;}
+    .sheet-row{padding:14px 20px;grid-template-columns:26px 1fr 84px;}
+    section{padding:64px 0;}
+  }
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute">
+  <filter id="chalkTexture">
+    <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" result="noise" seed="4"/>
+    <feDisplacementMap in="SourceGraphic" in2="noise" scale="1.6"/>
+  </filter>
+</svg>
+
+<header>
+  <nav>
+    <a href="#top" class="logo">
+      <svg class="logo-mark" viewBox="0 0 26 26" fill="none">
+        <rect x="2" y="17" width="6" height="7" rx="1.5" fill="#5FBF8E"/>
+        <rect x="10" y="11" width="6" height="13" rx="1.5" fill="#FFC857"/>
+        <rect x="18" y="4" width="6" height="20" rx="1.5" fill="#FF6B4A"/>
+      </svg>
+      ClimbStack
+    </a>
+    <ul class="nav-links">
+      <li><a href="#sheet">The Sheet</a></li>
+      <li><a href="#topics">Topics</a></li>
+      <li><a href="#courses">Courses</a></li>
+      <li><a href="#testimonials">Stories</a></li>
+    </ul>
+    <div class="nav-cta">
+      <a href="#" class="btn btn-ghost">Log in</a>
+      <a href="#courses" class="btn btn-primary">Start free</a>
+    </div>
+  </nav>
+</header>
+
+<main id="top">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div>
+        <span class="eyebrow">455 problems · 12 topics · 1 path</span>
+        <h1>Every rung of DSA,<br>in the <span class="hl">right order</span>.</h1>
+        <p class="lead">ClimbStack turns Data Structures & Algorithms into a single ordered staircase — one sheet, one topic at a time, so you always know the next problem to solve.</p>
+        <div class="hero-actions">
+          <a href="#sheet" class="btn btn-primary">Open the sheet →</a>
+          <a href="#courses" class="btn btn-outline">Browse courses</a>
+        </div>
+        <div class="hero-stats">
+          <div>
+            <span class="stat-num">10.5L+</span>
+            <span class="stat-label">learners climbing</span>
+          </div>
+          <div>
+            <span class="stat-num">455</span>
+            <span class="stat-label">curated problems</span>
+          </div>
+          <div>
+            <span class="stat-num">500+</span>
+            <span class="stat-label">companies covered</span>
+          </div>
+          <div>
+            <span class="stat-num">4.9/5</span>
+            <span class="stat-label">learner rating</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="stair-wrap">
+        <svg class="stair-svg" viewBox="0 0 380 460" fill="none">
+          <!-- rungs, bottom (wide/easy) to top (narrow/advanced) -->
+          <g class="chalk">
+            <rect x="40" y="400" width="300" height="40" rx="6" fill="#1C4936" stroke="#5FBF8E" stroke-width="1.5"/>
+            <rect x="40" y="400" width="300" height="40" rx="6" fill="#5FBF8E" fill-opacity="0.18"/>
+            <rect x="70" y="340" width="260" height="40" rx="6" fill="#1C4936" stroke="#5FBF8E" stroke-width="1.5"/>
+            <rect x="70" y="340" width="260" height="40" rx="6" fill="#5FBF8E" fill-opacity="0.18"/>
+            <rect x="100" y="280" width="230" height="40" rx="6" fill="#1C4936" stroke="#FFC857" stroke-width="1.5"/>
+            <rect x="130" y="220" width="200" height="40" rx="6" fill="#1C4936" stroke="#FFC857" stroke-width="1.5"/>
+            <rect x="160" y="160" width="170" height="40" rx="6" fill="#1C4936" stroke="#FF6B4A" stroke-width="1.5"/>
+            <rect x="190" y="100" width="140" height="40" rx="6" fill="#1C4936" stroke="#FF6B4A" stroke-width="1.5"/>
+            <rect x="220" y="44" width="110" height="40" rx="6" fill="#1C4936" stroke="#FF6B4A" stroke-width="1.5"/>
+          </g>
+          <text x="60" y="424" class="rung-label done">Arrays</text>
+          <text x="90" y="364" class="rung-label done">Strings</text>
+          <text x="120" y="304" class="rung-label">Linked List</text>
+          <text x="150" y="244" class="rung-label">Trees</text>
+          <text x="180" y="184" class="rung-label">Graphs</text>
+          <text x="210" y="124" class="rung-label">DP</text>
+          <text x="240" y="68" class="rung-label">Advanced</text>
+
+          <circle id="climberDot" class="climber" cx="90" cy="380" r="9" fill="#FF6B4A"/>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- TOPICS -->
+  <section id="topics">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="section-tag">Step by step</span>
+        <h2>Twelve topics. One climb.</h2>
+        <p>Every problem sits inside a topic, and every topic sits at a fixed point on the staircase — so difficulty always increases in a way that actually makes sense.</p>
+      </div>
+      <div class="topics-grid" id="topicsGrid">
+        <!-- injected by JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- SHEET / TRACKER -->
+  <section id="sheet">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="section-tag">The Climb Sheet</span>
+        <h2>Check problems off as you go.</h2>
+        <p>A live preview of the sheet — tick a box and watch your progress bar move. The full sheet tracks all 455 problems across every topic.</p>
+      </div>
+
+      <div class="sheet-panel reveal">
+        <div class="sheet-top">
+          <div>
+            <div class="sheet-title">Arrays & Strings — Foundations</div>
+            <div class="sheet-sub">8 of 455 problems shown</div>
+          </div>
+          <div class="progress-block">
+            <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+            <span class="progress-text" id="progressText">0 / 8</span>
+          </div>
+        </div>
+
+        <div class="sheet-row head">
+          <span></span><span>Problem</span><span class="col-tag">Topic</span><span>Difficulty</span><span>Link</span>
+        </div>
+        <div id="sheetRows"></div>
+
+        <div class="sheet-footer">
+          <span>Progress saves per session · sign in to keep it forever</span>
+          <a href="#" class="btn btn-outline" style="padding:9px 18px;font-size:13.5px;">See full sheet →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STAT BAND -->
+  <section class="stat-band">
+    <div class="wrap">
+      <div class="band-item reveal">
+        <div class="band-num">10,50,000+</div>
+        <div class="band-label">learners on the sheet</div>
+      </div>
+      <div class="band-item reveal">
+        <div class="band-num">92%</div>
+        <div class="band-label">say it beat scattered prep</div>
+      </div>
+      <div class="band-item reveal">
+        <div class="band-num">3.2M</div>
+        <div class="band-label">problems marked solved</div>
+      </div>
+      <div class="band-item reveal">
+        <div class="band-num">500+</div>
+        <div class="band-label">companies' patterns covered</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- COURSES -->
+  <section id="courses">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="section-tag">Guided paths</span>
+        <h2>Courses that follow the same staircase.</h2>
+        <p>Free where it matters most, paid where you want a shortcut — video, notes, and doubt support built around the same 12 topics.</p>
+      </div>
+      <div class="course-grid">
+        <div class="course-card reveal">
+          <div class="course-level">Beginner → Advanced</div>
+          <h3>DSA Foundations</h3>
+          <p class="desc">The full 455-problem sheet with short concept videos for every topic on the staircase.</p>
+          <ul class="course-feats">
+            <li><svg viewBox="0 0 20 20" fill="none"><path d="M4 10l4 4 8-8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>455 problems, fully ordered</li>
+            <li><svg viewBox="0 0 20 20" fill="none"><path d="M4 10l4 4 8-8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Concept videos per topic</li>
+            <li><svg viewBox="0 0 20 20" fill="none"><path d="M4 10l4 4 8-8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Community discussion threads</li>
+          </ul>
+          <div class="course-price"><span class="free">Free</span></div>
+          <a href="#" class="btn btn-outline">Start climbing</a>
+        </div>
+
+        <div class="course-card featured reveal">
+          <span class="featured-badge">MOST CLIMBED</span>
+          <div class="course-level">Interview-ready</div>
+          <h3>Company-wise Prep</h3>
+          <p class="desc">Problem sets grouped by the companies that actually ask them, plus mock interviews.</p>
+          <ul class="course-feats">
+            <li><svg viewBox="0 0 20 20" fill="none"><path d="M4 10l4 4 8-8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>500+ company problem sets</li>
+            <li><svg viewBox="0 0 20 20" fill="none"><path d="M4 10l4 4 8-8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Timed mock interviews</li>
+            <li><svg viewBox="0 0 20 20" fill="none"><path d="M4 10l4 4 8-8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>1:1 doubt support</li>
+          </ul>
+          <div class="course-price"><span class="amt">₹4,999</span><span class="per">/ one-time</span></div>
+          <a href="#" class="btn btn-primary">Get access</a>
+        </div>
+
+        <div class="course-card reveal">
+          <div class="course-level">Senior track</div>
+          <h3>System Design Primer</h3>
+          <p class="desc">The next step after DSA — scaling, trade-offs, and real architecture walkthroughs.</p>
+          <ul class="course-feats">
+            <li><svg viewBox="0 0 20 20" fill="none"><path d="M4 10l4 4 8-8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>30+ architecture case studies</li>
+            <li><svg viewBox="0 0 20 20" fill="none"><path d="M4 10l4 4 8-8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Trade-off frameworks</li>
+            <li><svg viewBox="0 0 20 20" fill="none"><path d="M4 10l4 4 8-8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Downloadable diagrams</li>
+          </ul>
+          <div class="course-price"><span class="amt">₹2,999</span><span class="per">/ one-time</span></div>
+          <a href="#" class="btn btn-outline">Get access</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section id="testimonials">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="section-tag">From the community</span>
+        <h2>What the climb looks like from the top.</h2>
+      </div>
+      <div class="testi-grid">
+        <div class="testi-card reveal">
+          <p class="testi-quote">I stopped jumping between five different lists. Having one ordered sheet meant I always knew the next problem instead of debating what to solve.</p>
+          <div class="testi-person">
+            <div class="avatar" style="background:#5FBF8E">AR</div>
+            <div><div class="p-name">Aditi R.</div><div class="p-role">Final-year CS student</div></div>
+          </div>
+        </div>
+        <div class="testi-card reveal">
+          <p class="testi-quote">Switching from support engineering to backend felt impossible until I had a structured path. Three months on the sheet and I passed my first DSA round.</p>
+          <div class="testi-person">
+            <div class="avatar" style="background:#FFC857">MK</div>
+            <div><div class="p-name">Mohit K.</div><div class="p-role">Career switcher, now SDE-1</div></div>
+          </div>
+        </div>
+        <div class="testi-card reveal">
+          <p class="testi-quote">The company-wise sets were the reason I stopped over-preparing for topics that never actually came up in my interviews.</p>
+          <div class="testi-person">
+            <div class="avatar" style="background:#FF6B4A">SP</div>
+            <div><div class="p-name">Sanya P.</div><div class="p-role">Placed at a product company</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FINAL CTA -->
+  <section class="final-cta">
+    <div class="wrap">
+      <h2 class="reveal">Your next rung is one problem away.</h2>
+      <p class="reveal">Free forever for the core sheet. No credit card, no fine print.</p>
+      <div class="cta-row reveal">
+        <a href="#sheet" class="btn btn-primary">Start the sheet →</a>
+        <a href="#courses" class="btn btn-outline">Compare courses</a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="#top" class="logo">
+          <svg class="logo-mark" viewBox="0 0 26 26" fill="none">
+            <rect x="2" y="17" width="6" height="7" rx="1.5" fill="#5FBF8E"/>
+            <rect x="10" y="11" width="6" height="13" rx="1.5" fill="#FFC857"/>
+            <rect x="18" y="4" width="6" height="20" rx="1.5" fill="#FF6B4A"/>
+          </svg>
+          ClimbStack
+        </a>
+        <p>One ordered sheet for Data Structures & Algorithms — built so you never have to wonder what to solve next.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Learn</h4>
+        <ul>
+          <li><a href="#sheet">The Climb Sheet</a></li>
+          <li><a href="#topics">Topics</a></li>
+          <li><a href="#courses">Courses</a></li>
+          <li><a href="#">Problems archive</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <ul>
+          <li><a href="#">About</a></li>
+          <li><a href="#">Careers</a></li>
+          <li><a href="#">Contact</a></li>
+          <li><a href="#">Blog</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Community</h4>
+        <ul>
+          <li><a href="#">Discord</a></li>
+          <li><a href="#">YouTube</a></li>
+          <li><a href="#">Twitter / X</a></li>
+          <li><a href="#">LinkedIn</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 ClimbStack. Built for learners, one rung at a time.</span>
+      <span>Made with chalk, coffee, and recursion.</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // ---------- topics data ----------
+  const topics = [
+    {name:'Arrays', desc:'Traversals, prefix sums, in-place tricks.', count:'52 problems', color:'#5FBF8E'},
+    {name:'Strings', desc:'Pattern matching and manipulation.', count:'34 problems', color:'#5FBF8E'},
+    {name:'Recursion', desc:'Backtracking and divide & conquer.', count:'28 problems', color:'#FFC857'},
+    {name:'Linked List', desc:'Pointers, cycles, in-place reversal.', count:'31 problems', color:'#FFC857'},
+    {name:'Stacks & Queues', desc:'Monotonic stacks, sliding windows.', count:'26 problems', color:'#FFC857'},
+    {name:'Binary Search', desc:'Search space reduction on sorted data.', count:'22 problems', color:'#FFC857'},
+    {name:'Trees', desc:'Traversals, BSTs, and tree DP.', count:'44 problems', color:'#FF6B4A'},
+    {name:'Graphs', desc:'BFS/DFS, shortest paths, unions.', count:'38 problems', color:'#FF6B4A'},
+    {name:'Dynamic Programming', desc:'From 1D memoization to DP on trees.', count:'46 problems', color:'#FF6B4A'},
+    {name:'Greedy', desc:'Local choices that reach a global optimum.', count:'18 problems', color:'#FF6B4A'},
+    {name:'Heaps', desc:'Priority queues and k-way problems.', count:'16 problems', color:'#FF6B4A'},
+    {name:'Bit Manipulation', desc:'Masks, XOR tricks, and bit DP.', count:'14 problems', color:'#FF6B4A'},
+  ];
+
+  const iconPaths = {
+    'Arrays':'<rect x="3" y="9" width="4" height="9" rx="1"/><rect x="10" y="4" width="4" height="14" rx="1"/><rect x="17" y="12" width="4" height="6" rx="1"/>',
+    'Strings':'<path d="M4 18V6h5a3 3 0 010 6H4"/><path d="M9 12h1.5a3 3 0 010 6H14"/>',
+    'Recursion':'<circle cx="12" cy="7" r="3"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="18" r="3"/><path d="M12 10v3M9.5 16l-1-1M14.5 16l1-1"/>',
+    'Linked List':'<circle cx="5" cy="12" r="2.5"/><circle cx="12" cy="12" r="2.5"/><circle cx="19" cy="12" r="2.5"/><path d="M7.5 12h2M14.5 12h2"/>',
+    'Stacks & Queues':'<rect x="5" y="4" width="14" height="4" rx="1"/><rect x="5" y="10" width="14" height="4" rx="1"/><rect x="5" y="16" width="14" height="4" rx="1"/>',
+    'Binary Search':'<circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35" stroke-linecap="round"/>',
+    'Trees':'<circle cx="12" cy="4" r="2"/><circle cx="6" cy="12" r="2"/><circle cx="18" cy="12" r="2"/><circle cx="3" cy="19" r="1.8"/><circle cx="9" cy="19" r="1.8"/><path d="M12 6v3M10.5 9L7.5 10.5M13.5 9L16.5 10.5M6 14v3M4.6 17.5L4 17.8M7.4 17.5L8 17.8"/>',
+    'Graphs':'<circle cx="5" cy="6" r="2.2"/><circle cx="19" cy="6" r="2.2"/><circle cx="12" cy="12" r="2.2"/><circle cx="6" cy="18" r="2.2"/><circle cx="18" cy="18" r="2.2"/><path d="M7 7.3L10.3 10.7M17 7.3L13.7 10.7M10.3 13.3L7.3 16.7M13.7 13.3L16.7 16.7"/>',
+    'Dynamic Programming':'<rect x="3" y="14" width="4" height="4"/><rect x="8" y="10" width="4" height="8"/><rect x="13" y="6" width="4" height="12"/><rect x="18" y="12" width="3" height="6"/>',
+    'Greedy':'<path d="M12 3v4M5 8l3 2M19 8l-3 2M4 15h16M6 15v3a2 2 0 002 2h8a2 2 0 002-2v-3"/><circle cx="12" cy="7" r="2.5"/>',
+    'Heaps':'<path d="M12 4l3 5H9l3-5z"/><path d="M6 9l2 5H4l2-5z"/><path d="M18 9l2 5h-4l2-5z"/><path d="M4 14h16l-1.5 4h-13z"/>',
+    'Bit Manipulation':'<rect x="3" y="10" width="4" height="4" rx="1"/><rect x="8.5" y="10" width="4" height="4" rx="1"/><rect x="14" y="10" width="4" height="4" rx="1"/><rect x="19.5" y="10" width="1.5" height="4" rx="0.5"/>'
+  };
+
+  const topicsGrid = document.getElementById('topicsGrid');
+  topics.forEach(t=>{
+    const el = document.createElement('div');
+    el.className = 'topic-card';
+    el.innerHTML = `
+      <svg class="topic-icon" viewBox="0 0 24 24" fill="none" stroke="${t.color}" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">${iconPaths[t.name]}</svg>
+      <h3>${t.name}</h3>
+      <p>${t.desc}</p>
+      <span class="topic-count">${t.count}</span>
+    `;
+    topicsGrid.appendChild(el);
+  });
+
+  // ---------- sheet rows ----------
+  const problems = [
+    {name:'Find the Second Largest Number in an Array', topic:'Arrays', diff:'easy'},
+    {name:'Rotate an Array by K Places', topic:'Arrays', diff:'easy'},
+    {name:'Longest Substring Without Repeating Characters', topic:'Strings', diff:'medium'},
+    {name:'Check for Balanced Parentheses', topic:'Stacks', diff:'easy'},
+    {name:'Merge Two Sorted Linked Lists', topic:'Linked List', diff:'medium'},
+    {name:'Search in a Rotated Sorted Array', topic:'Binary Search', diff:'medium'},
+    {name:'Detect Cycle in a Directed Graph', topic:'Graphs', diff:'hard'},
+    {name:'Longest Increasing Subsequence', topic:'DP', diff:'hard'},
+  ];
+
+  const sheetRows = document.getElementById('sheetRows');
+  const progressFill = document.getElementById('progressFill');
+  const progressText = document.getElementById('progressText');
+  let checkedCount = 0;
+  const total = problems.length;
+
+  function updateProgress(){
+    const pct = Math.round((checkedCount/total)*100);
+    progressFill.style.width = pct + '%';
+    progressText.textContent = `${checkedCount} / ${total}`;
+  }
+
+  problems.forEach((p,i)=>{
+    const row = document.createElement('div');
+    row.className = 'sheet-row';
+    row.innerHTML = `
+      <button class="chk" data-idx="${i}" aria-label="Mark ${p.name} as solved">
+        <svg viewBox="0 0 20 20" fill="none"><path d="M4 10l4 4 8-8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <span class="prob-name" data-name="${i}">${p.name}</span>
+      <span class="tag col-tag">${p.topic}</span>
+      <span class="diff ${p.diff}">${p.diff.charAt(0).toUpperCase()+p.diff.slice(1)}</span>
+      <span style="color:var(--text-faint);font-size:13px;">View →</span>
+    `;
+    sheetRows.appendChild(row);
+  });
+
+  sheetRows.addEventListener('click', (e)=>{
+    const btn = e.target.closest('.chk');
+    if(!btn) return;
+    const idx = btn.dataset.idx;
+    const nameEl = sheetRows.querySelector(`.prob-name[data-name="${idx}"]`);
+    const isChecked = btn.classList.toggle('checked');
+    nameEl.classList.toggle('checked', isChecked);
+    checkedCount += isChecked ? 1 : -1;
+    updateProgress();
+  });
+
+  updateProgress();
+
+  // ---------- scroll reveal ----------
+  const revealEls = document.querySelectorAll('.reveal, .topic-card');
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(entry=>{
+      if(entry.isIntersecting){
+        entry.target.classList.add('in');
+        io.unobserve(entry.target);
+      }
+    });
+  }, {threshold:0.12});
+  revealEls.forEach(el=>io.observe(el));
+
+  // ---------- climber dot gentle float ----------
+  const dot = document.getElementById('climberDot');
+  if(dot && !window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+    let t = 0;
+    function animateDot(){
+      t += 0.02;
+      const y = 380 + Math.sin(t)*4;
+      dot.setAttribute('cy', y.toFixed(1));
+      requestAnimationFrame(animateDot);
+    }
+    animateDot();
+  }
+</script>
+
+</body>
+</html>

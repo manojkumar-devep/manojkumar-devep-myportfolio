@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Selection Sort · CodeLadder</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#161A22;
+    --panel:#1D2331;
+    --panel-alt:#232A3A;
+    --editor-bg:#12151D;
+    --border:#2C3444;
+    --border-soft:#242B3A;
+    --text:#E7E5DE;
+    --text-dim:#9AA3B2;
+    --text-faint:#5E677A;
+    --amber:#E8A33D;
+    --amber-dim:#8A6323;
+    --sage:#7FB89A;
+    --sage-dim:#385045;
+    --rose:#E2685C;
+    --rose-dim:#5B3230;
+    --mono:'IBM Plex Mono', ui-monospace, Menlo, monospace;
+    --sans:'IBM Plex Sans', system-ui, sans-serif;
+    --radius:6px;
+  }
+  *{box-sizing:border-box;}
+  html,body{height:100%;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--text);
+    font-family:var(--sans);
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{background:var(--amber); color:#161A22;}
+  button{font-family:inherit; cursor:pointer;}
+  a{color:inherit;}
+
+  /* ===== Focus visibility ===== */
+  a:focus-visible, button:focus-visible, [tabindex]:focus-visible{
+    outline:2px solid var(--amber);
+    outline-offset:2px;
+  }
+
+  /* ===== Top bar ===== */
+  .topbar{
+    height:52px;
+    display:flex;
+    align-items:center;
+    gap:20px;
+    padding:0 16px;
+    border-bottom:1px solid var(--border);
+    background:var(--panel);
+    position:sticky;
+    top:0;
+    z-index:40;
+  }
+  .brand{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    font-family:var(--mono);
+    font-weight:700;
+    font-size:15px;
+    letter-spacing:0.02em;
+    white-space:nowrap;
+  }
+  .brand .mark{
+    width:22px;height:22px;
+    border-radius:5px;
+    background:linear-gradient(135deg, var(--amber), var(--sage));
+    display:flex;align-items:center;justify-content:center;
+    font-size:12px;color:#161A22;font-weight:700;
+  }
+  .crumbs{
+    font-size:13px;
+    color:var(--text-dim);
+    display:flex;
+    align-items:center;
+    gap:6px;
+    overflow:hidden;
+    white-space:nowrap;
+  }
+  .crumbs .sep{color:var(--text-faint);}
+  .crumbs .current{color:var(--text); font-weight:500;}
+  .topbar-spacer{flex:1;}
+  .streak{
+    display:flex;align-items:center;gap:6px;
+    font-family:var(--mono);
+    font-size:12px;
+    color:var(--amber);
+    border:1px solid var(--amber-dim);
+    background:rgba(232,163,61,0.08);
+    padding:5px 10px;
+    border-radius:20px;
+  }
+  .avatar{
+    width:30px;height:30px;border-radius:50%;
+    background:var(--panel-alt);
+    border:1px solid var(--border);
+    display:flex;align-items:center;justify-content:center;
+    font-size:12px;font-weight:600;color:var(--text-dim);
+    margin-left:12px;
+  }
+
+  /* ===== Shell layout ===== */
+  .shell{
+    display:grid;
+    grid-template-columns:250px 1fr 1fr;
+    height:calc(100vh - 52px);
+  }
+
+  /* ===== Sidebar ===== */
+  .sidebar{
+    border-right:1px solid var(--border);
+    background:var(--panel);
+    overflow-y:auto;
+    padding:14px 0 40px;
+  }
+  .sidebar-head{
+    padding:0 16px 12px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+  }
+  .sidebar-title{
+    font-family:var(--mono);
+    font-size:11px;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    color:var(--text-faint);
+  }
+  .sidebar-progress{
+    font-family:var(--mono);
+    font-size:11px;
+    color:var(--sage);
+  }
+  .topic{
+    border-bottom:1px solid var(--border-soft);
+  }
+  .topic-head{
+    width:100%;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:8px;
+    padding:10px 16px;
+    background:none;
+    border:none;
+    color:var(--text);
+    font-size:13.5px;
+    font-weight:500;
+    text-align:left;
+  }
+  .topic-head:hover{background:var(--panel-alt);}
+  .topic-head .count{
+    font-family:var(--mono);
+    font-size:11px;
+    color:var(--text-faint);
+  }
+  .topic-head .chev{
+    color:var(--text-faint);
+    font-size:10px;
+    transition:transform .15s ease;
+    flex-shrink:0;
+  }
+  .topic.open .chev{transform:rotate(90deg);}
+  .topic-body{
+    display:none;
+    padding:2px 0 8px;
+  }
+  .topic.open .topic-body{display:block;}
+  .topic.active .topic-head{color:var(--amber);}
+  .problem-row{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    padding:7px 16px 7px 30px;
+    font-size:13px;
+    color:var(--text-dim);
+    text-decoration:none;
+  }
+  .problem-row:hover{background:var(--panel-alt); color:var(--text);}
+  .problem-row.active{
+    background:rgba(232,163,61,0.09);
+    color:var(--amber);
+    border-right:2px solid var(--amber);
+  }
+  .dot{
+    width:7px;height:7px;border-radius:50%;
+    border:1.5px solid var(--text-faint);
+    flex-shrink:0;
+  }
+  .dot.done{background:var(--sage); border-color:var(--sage);}
+  .dot.current{background:var(--amber); border-color:var(--amber);}
+
+  /* ===== Problem pane ===== */
+  .problem-pane{
+    border-right:1px solid var(--border);
+    overflow-y:auto;
+    padding:0 0 60px;
+  }
+  .tabs{
+    display:flex;
+    gap:2px;
+    padding:10px 22px 0;
+    border-bottom:1px solid var(--border);
+    position:sticky;
+    top:0;
+    background:var(--bg);
+    z-index:10;
+  }
+  .tab{
+    background:none;
+    border:none;
+    color:var(--text-dim);
+    font-size:13px;
+    font-weight:500;
+    padding:10px 14px;
+    border-bottom:2px solid transparent;
+  }
+  .tab.active{color:var(--amber); border-bottom-color:var(--amber);}
+  .tab.locked{color:var(--text-faint); display:flex; align-items:center; gap:5px;}
+
+  .problem-content{padding:22px 26px 10px;}
+  .badges{display:flex; gap:8px; align-items:center; margin-bottom:10px; flex-wrap:wrap;}
+  .badge{
+    font-family:var(--mono);
+    font-size:11px;
+    padding:3px 9px;
+    border-radius:20px;
+    border:1px solid var(--border);
+  }
+  .badge.diff{color:var(--sage); border-color:var(--sage-dim); background:rgba(127,184,154,0.08);}
+  .badge.tag{color:var(--text-dim);}
+  h1.ptitle{
+    font-family:var(--mono);
+    font-size:22px;
+    margin:0 0 14px;
+    font-weight:600;
+    letter-spacing:-0.01em;
+  }
+
+  /* Signature visualizer */
+  .viz{
+    border:1px solid var(--border);
+    background:var(--editor-bg);
+    border-radius:var(--radius);
+    padding:18px 18px 14px;
+    margin-bottom:22px;
+  }
+  .viz-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    margin-bottom:14px;
+  }
+  .viz-label{
+    font-family:var(--mono);
+    font-size:11px;
+    color:var(--text-faint);
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+  }
+  .viz-pass{
+    font-family:var(--mono);
+    font-size:12px;
+    color:var(--amber);
+  }
+  .viz-bars{
+    display:flex;
+    align-items:flex-end;
+    gap:6px;
+    height:110px;
+  }
+  .bar-wrap{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:flex-end;
+    flex:1;
+    height:100%;
+    gap:6px;
+  }
+  .bar{
+    width:100%;
+    max-width:34px;
+    background:var(--panel-alt);
+    border:1px solid var(--border);
+    border-radius:3px 3px 0 0;
+    transition:height .35s ease, background .3s ease, border-color .3s ease;
+    position:relative;
+  }
+  .bar.sorted{background:rgba(127,184,154,0.25); border-color:var(--sage);}
+  .bar.min{background:rgba(232,163,61,0.3); border-color:var(--amber);}
+  .bar.compare{background:rgba(226,104,92,0.22); border-color:var(--rose);}
+  .bar-idx{font-family:var(--mono); font-size:10px; color:var(--text-faint);}
+  .viz-legend{
+    display:flex; gap:16px; margin-top:12px; flex-wrap:wrap;
+  }
+  .legend-item{
+    display:flex; align-items:center; gap:6px;
+    font-family:var(--mono); font-size:11px; color:var(--text-dim);
+  }
+  .legend-swatch{width:10px;height:10px;border-radius:2px;}
+
+  .prose{font-size:14.5px; line-height:1.7; color:var(--text);}
+  .prose p{margin:0 0 14px;}
+  .prose code{
+    font-family:var(--mono);
+    background:var(--panel-alt);
+    padding:1px 6px;
+    border-radius:4px;
+    font-size:13px;
+    color:var(--amber);
+  }
+  h2.sec{
+    font-family:var(--mono);
+    font-size:14px;
+    text-transform:uppercase;
+    letter-spacing:0.06em;
+    color:var(--text-dim);
+    margin:26px 0 12px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  h2.sec::after{
+    content:'';
+    flex:1;
+    height:1px;
+    background:var(--border);
+  }
+
+  .example{
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:14px 16px;
+    margin-bottom:12px;
+    font-family:var(--mono);
+    font-size:13px;
+  }
+  .example-row{margin-bottom:6px; display:flex; gap:8px;}
+  .example-row:last-child{margin-bottom:0;}
+  .example-row .k{color:var(--text-faint); flex-shrink:0;}
+  .example-row .v{color:var(--text);}
+
+  ul.constraints{margin:0; padding-left:18px; font-size:13.5px; color:var(--text-dim); line-height:1.9;}
+  ul.constraints code{font-family:var(--mono); color:var(--sage); font-size:12.5px;}
+
+  .hint-box{
+    border:1px dashed var(--border);
+    border-radius:var(--radius);
+    padding:12px 14px;
+    margin-top:18px;
+  }
+  .hint-toggle{
+    background:none; border:none; color:var(--text-dim);
+    font-size:13px; display:flex; align-items:center; gap:8px; width:100%;
+    justify-content:space-between; padding:0;
+  }
+  .hint-body{
+    display:none;
+    margin-top:10px;
+    font-size:13.5px;
+    color:var(--text-dim);
+    line-height:1.7;
+    border-top:1px solid var(--border-soft);
+    padding-top:10px;
+  }
+  .hint-box.open .hint-body{display:block;}
+
+  /* ===== Editor pane ===== */
+  .editor-pane{
+    display:flex;
+    flex-direction:column;
+    min-width:0;
+  }
+  .editor-bar{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:8px 14px;
+    border-bottom:1px solid var(--border);
+    background:var(--panel);
+  }
+  select.lang{
+    background:var(--panel-alt);
+    color:var(--text);
+    border:1px solid var(--border);
+    border-radius:5px;
+    padding:6px 10px;
+    font-family:var(--mono);
+    font-size:12.5px;
+  }
+  .editor-bar .spacer{flex:1;}
+  .btn{
+    border:1px solid var(--border);
+    background:var(--panel-alt);
+    color:var(--text);
+    padding:7px 14px;
+    border-radius:5px;
+    font-size:12.5px;
+    font-weight:600;
+    font-family:var(--mono);
+    display:flex;align-items:center;gap:6px;
+  }
+  .btn:hover{border-color:var(--text-faint);}
+  .btn.primary{
+    background:var(--amber);
+    border-color:var(--amber);
+    color:#161A22;
+  }
+  .btn.primary:hover{background:#f0b458;}
+  .btn.ghost{background:none;}
+
+  .code-wrap{
+    flex:1;
+    display:flex;
+    background:var(--editor-bg);
+    overflow:hidden;
+    min-height:0;
+  }
+  .gutter{
+    font-family:var(--mono);
+    font-size:13px;
+    line-height:21px;
+    color:var(--text-faint);
+    padding:14px 10px 14px 16px;
+    text-align:right;
+    user-select:none;
+    background:var(--editor-bg);
+    border-right:1px solid var(--border-soft);
+    white-space:pre;
+    overflow:hidden;
+  }
+  textarea.code{
+    flex:1;
+    resize:none;
+    border:none;
+    outline:none;
+    background:var(--editor-bg);
+    color:var(--text);
+    font-family:var(--mono);
+    font-size:13px;
+    line-height:21px;
+    padding:14px 16px;
+    tab-size:2;
+    white-space:pre;
+  }
+
+  .console{
+    border-top:1px solid var(--border);
+    background:var(--panel);
+    max-height:38%;
+    display:flex;
+    flex-direction:column;
+  }
+  .console-tabs{
+    display:flex;
+    gap:0;
+    border-bottom:1px solid var(--border);
+    padding:0 14px;
+  }
+  .ctab{
+    background:none;border:none;color:var(--text-dim);
+    font-family:var(--mono); font-size:12px;
+    padding:9px 12px;
+    border-bottom:2px solid transparent;
+  }
+  .ctab.active{color:var(--amber); border-bottom-color:var(--amber);}
+  .console-body{
+    overflow-y:auto;
+    padding:12px 16px 16px;
+    font-family:var(--mono);
+    font-size:12.5px;
+  }
+  .case-pill{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    padding:5px 10px;
+    border-radius:5px;
+    border:1px solid var(--border);
+    margin:0 6px 6px 0;
+    font-size:12px;
+    color:var(--text-dim);
+  }
+  .case-pill.pass{color:var(--sage); border-color:var(--sage-dim); background:rgba(127,184,154,0.08);}
+  .case-pill.fail{color:var(--rose); border-color:var(--rose-dim); background:rgba(226,104,92,0.08);}
+  .result-line{margin:3px 0; color:var(--text-dim);}
+  .result-line .k{color:var(--text-faint);}
+  .result-line.ok{color:var(--sage);}
+  .result-line.bad{color:var(--rose);}
+  .empty-console{color:var(--text-faint); font-size:12.5px;}
+
+  /* Scrollbars */
+  ::-webkit-scrollbar{width:9px; height:9px;}
+  ::-webkit-scrollbar-track{background:transparent;}
+  ::-webkit-scrollbar-thumb{background:var(--border); border-radius:8px;}
+  ::-webkit-scrollbar-thumb:hover{background:var(--text-faint);}
+
+  @media (max-width: 980px){
+    .shell{grid-template-columns:1fr; height:auto;}
+    .sidebar{display:none;}
+    .problem-pane, .editor-pane{height:auto; border-right:none;}
+    .editor-pane{border-top:1px solid var(--border);}
+    textarea.code{min-height:320px;}
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .bar{transition:none;}
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand"><span class="mark">CL</span> CodeLadder</div>
+  <div class="crumbs">
+    <span>DSA Sheet</span><span class="sep">/</span>
+    <span>Sorting</span><span class="sep">/</span>
+    <span class="current">Selection Sort</span>
+  </div>
+  <div class="topbar-spacer"></div>
+  <div class="streak">🔥 12 day streak</div>
+  <div class="avatar">AK</div>
+</div>
+
+<div class="shell">
+
+  <!-- SIDEBAR -->
+  <nav class="sidebar" aria-label="Topics">
+    <div class="sidebar-head">
+      <span class="sidebar-title">DSA Track</span>
+      <span class="sidebar-progress">14 / 62</span>
+    </div>
+
+    <div class="topic open active">
+      <button class="topic-head" onclick="toggleTopic(this)">
+        <span>Sorting <span class="count">6</span></span>
+        <span class="chev">▶</span>
+      </button>
+      <div class="topic-body">
+        <a class="problem-row" href="#"><span class="dot done"></span>Bubble Sort</a>
+        <a class="problem-row" href="#"><span class="dot done"></span>Insertion Sort</a>
+        <a class="problem-row active" href="#"><span class="dot current"></span>Selection Sort</a>
+        <a class="problem-row" href="#"><span class="dot"></span>Merge Sort</a>
+        <a class="problem-row" href="#"><span class="dot"></span>Quick Sort</a>
+        <a class="problem-row" href="#"><span class="dot"></span>Cyclic Sort</a>
+      </div>
+    </div>
+
+    <div class="topic">
+      <button class="topic-head" onclick="toggleTopic(this)">
+        <span>Arrays <span class="count">14</span></span>
+        <span class="chev">▶</span>
+      </button>
+      <div class="topic-body"></div>
+    </div>
+    <div class="topic">
+      <button class="topic-head" onclick="toggleTopic(this)">
+        <span>Hashing <span class="count">8</span></span>
+        <span class="chev">▶</span>
+      </button>
+      <div class="topic-body"></div>
+    </div>
+    <div class="topic">
+      <button class="topic-head" onclick="toggleTopic(this)">
+        <span>Binary Search <span class="count">11</span></span>
+        <span class="chev">▶</span>
+      </button>
+      <div class="topic-body"></div>
+    </div>
+    <div class="topic">
+      <button class="topic-head" onclick="toggleTopic(this)">
+        <span>Recursion <span class="count">9</span></span>
+        <span class="chev">▶</span>
+      </button>
+      <div class="topic-body"></div>
+    </div>
+    <div class="topic">
+      <button class="topic-head" onclick="toggleTopic(this)">
+        <span>Linked List <span class="count">13</span></span>
+        <span class="chev">▶</span>
+      </button>
+      <div class="topic-body"></div>
+    </div>
+    <div class="topic">
+      <button class="topic-head" onclick="toggleTopic(this)">
+        <span>Stacks / Queues <span class="count">10</span></span>
+        <span class="chev">▶</span>
+      </button>
+      <div class="topic-body"></div>
+    </div>
+    <div class="topic">
+      <button class="topic-head" onclick="toggleTopic(this)">
+        <span>Graphs <span class="count">18</span></span>
+        <span class="chev">▶</span>
+      </button>
+      <div class="topic-body"></div>
+    </div>
+    <div class="topic">
+      <button class="topic-head" onclick="toggleTopic(this)">
+        <span>Dynamic Programming <span class="count">22</span></span>
+        <span class="chev">▶</span>
+      </button>
+      <div class="topic-body"></div>
+    </div>
+  </nav>
+
+  <!-- PROBLEM PANE -->
+  <section class="problem-pane">
+    <div class="tabs">
+      <button class="tab active">Description</button>
+      <button class="tab locked">🔒 Editorial</button>
+      <button class="tab">Submissions</button>
+    </div>
+
+    <div class="problem-content">
+      <div class="badges">
+        <span class="badge diff">Easy</span>
+        <span class="badge tag">Sorting</span>
+        <span class="badge tag">In-place</span>
+        <span class="badge tag">O(n²)</span>
+      </div>
+      <h1 class="ptitle">03. Selection Sort</h1>
+
+      <!-- Signature visualizer: live selection sort demo -->
+      <div class="viz">
+        <div class="viz-head">
+          <span class="viz-label">Live trace</span>
+          <span class="viz-pass" id="vizPass">pass 1 · comparisons 0</span>
+        </div>
+        <div class="viz-bars" id="vizBars"></div>
+        <div class="viz-legend">
+          <span class="legend-item"><span class="legend-swatch" style="background:rgba(127,184,154,.5);border:1px solid var(--sage)"></span>sorted</span>
+          <span class="legend-item"><span class="legend-swatch" style="background:rgba(232,163,61,.5);border:1px solid var(--amber)"></span>current minimum</span>
+          <span class="legend-item"><span class="legend-swatch" style="background:rgba(226,104,92,.4);border:1px solid var(--rose)"></span>comparing</span>
+        </div>
+      </div>
+
+      <div class="prose">
+        <p>You're given an array <code>arr</code> of <code>n</code> integers. Sort the array in ascending order using the <strong>Selection Sort</strong> algorithm, and return the sorted array.</p>
+        <p>Selection sort divides the array into a sorted part (on the left) and an unsorted part (on the right). On every pass, it scans the unsorted part to find the smallest element and swaps it into the next position of the sorted part — one element locks into place per pass.</p>
+      </div>
+
+      <h2 class="sec">Examples</h2>
+      <div class="example">
+        <div class="example-row"><span class="k">Input:</span><span class="v">arr = [64, 25, 12, 22, 11]</span></div>
+        <div class="example-row"><span class="k">Output:</span><span class="v">[11, 12, 22, 25, 64]</span></div>
+        <div class="example-row"><span class="k">Explain:</span><span class="v">Each pass pulls the smallest remaining value to the front.</span></div>
+      </div>
+      <div class="example">
+        <div class="example-row"><span class="k">Input:</span><span class="v">arr = [5, 1, 4, 2, 8]</span></div>
+        <div class="example-row"><span class="k">Output:</span><span class="v">[1, 2, 4, 5, 8]</span></div>
+      </div>
+
+      <h2 class="sec">Constraints</h2>
+      <ul class="constraints">
+        <li><code>1 &le; n &le; 10^4</code></li>
+        <li><code>-10^5 &le; arr[i] &le; 10^5</code></li>
+        <li>Sort in-place with <code>O(1)</code> extra space</li>
+      </ul>
+
+      <h2 class="sec">Complexity</h2>
+      <ul class="constraints">
+        <li>Time: <code>O(n^2)</code> for all cases (best, average, worst)</li>
+        <li>Space: <code>O(1)</code></li>
+      </ul>
+
+      <div class="hint-box" id="hintBox">
+        <button class="hint-toggle" onclick="toggleHint()">
+          <span>💡 Hint 1</span><span id="hintChev">▶</span>
+        </button>
+        <div class="hint-body">
+          Use two nested loops. The outer loop fixes the boundary between sorted and unsorted regions. The inner loop scans the unsorted region to track the index of the smallest value, then swap it with the boundary element once the inner loop finishes.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- EDITOR PANE -->
+  <section class="editor-pane">
+    <div class="editor-bar">
+      <select class="lang" id="langSelect">
+        <option>JavaScript</option>
+        <option>Python (view only)</option>
+        <option>C++ (view only)</option>
+        <option>Java (view only)</option>
+      </select>
+      <div class="spacer"></div>
+      <button class="btn ghost" onclick="resetCode()">↺ Reset</button>
+      <button class="btn" onclick="runCode()">▶ Run</button>
+      <button class="btn primary" onclick="submitCode()">Submit</button>
+    </div>
+
+    <div class="code-wrap">
+      <div class="gutter" id="gutter">1</div>
+      <textarea class="code" id="codeArea" spellcheck="false"></textarea>
+    </div>
+
+    <div class="console">
+      <div class="console-tabs">
+        <button class="ctab active" id="tabResults" onclick="showConsoleTab('results')">Testcases</button>
+        <button class="ctab" id="tabOutput" onclick="showConsoleTab('output')">Console</button>
+      </div>
+      <div class="console-body" id="consoleBody">
+        <div class="empty-console">Run your code to see test case results here.</div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<script>
+  /* ---------- sidebar accordion ---------- */
+  function toggleTopic(btn){
+    const topic = btn.parentElement;
+    const wasOpen = topic.classList.contains('open');
+    document.querySelectorAll('.topic').forEach(t=>t.classList.remove('open'));
+    if(!wasOpen) topic.classList.add('open');
+  }
+
+  function toggleHint(){
+    const box = document.getElementById('hintBox');
+    box.classList.toggle('open');
+    document.getElementById('hintChev').textContent = box.classList.contains('open') ? '▼' : '▶';
+  }
+
+  /* ---------- live selection-sort visualizer ---------- */
+  const vizBarsEl = document.getElementById('vizBars');
+  const vizPassEl = document.getElementById('vizPass');
+  let vizData = [64, 25, 12, 22, 11, 90, 5];
+  const vizMax = Math.max(...vizData);
+
+  function renderBars(arr, sortedUpTo, minIdx, compareIdx){
+    vizBarsEl.innerHTML = '';
+    arr.forEach((val, i)=>{
+      const wrap = document.createElement('div');
+      wrap.className = 'bar-wrap';
+      const bar = document.createElement('div');
+      let cls = 'bar';
+      if(i < sortedUpTo) cls += ' sorted';
+      else if(i === compareIdx) cls += ' compare';
+      else if(i === minIdx) cls += ' min';
+      bar.className = cls;
+      bar.style.height = (14 + (val / vizMax) * 86) + '%';
+      const idx = document.createElement('div');
+      idx.className = 'bar-idx';
+      idx.textContent = val;
+      wrap.appendChild(bar);
+      wrap.appendChild(idx);
+      vizBarsEl.appendChild(wrap);
+    });
+  }
+
+  async function runVizLoop(){
+    while(true){
+      let arr = [64, 25, 12, 22, 11, 90, 5];
+      let comparisons = 0;
+      renderBars(arr, 0, null, null);
+      await sleep(700);
+      for(let i=0; i<arr.length-1; i++){
+        let minIdx = i;
+        vizPassEl.textContent = `pass ${i+1} · comparisons ${comparisons}`;
+        renderBars(arr, i, minIdx, null);
+        await sleep(280);
+        for(let j=i+1; j<arr.length; j++){
+          comparisons++;
+          renderBars(arr, i, minIdx, j);
+          vizPassEl.textContent = `pass ${i+1} · comparisons ${comparisons}`;
+          await sleep(180);
+          if(arr[j] < arr[minIdx]) minIdx = j;
+        }
+        [arr[i], arr[minIdx]] = [arr[minIdx], arr[i]];
+        renderBars(arr, i+1, null, null);
+        await sleep(320);
+      }
+      vizPassEl.textContent = `sorted · comparisons ${comparisons}`;
+      renderBars(arr, arr.length, null, null);
+      await sleep(1800);
+    }
+  }
+  function sleep(ms){ return new Promise(r=>setTimeout(r, ms)); }
+  runVizLoop();
+
+  /* ---------- code editor ---------- */
+  const defaultCode = `/**
+ * Implement selection sort.
+ * @param {number[]} arr
+ * @return {number[]} sorted array, ascending
+ */
+function selectionSort(arr) {
+  for (let i = 0; i < arr.length - 1; i++) {
+    let minIdx = i;
+    for (let j = i + 1; j < arr.length; j++) {
+      if (arr[j] < arr[minIdx]) {
+        minIdx = j;
+      }
+    }
+    if (minIdx !== i) {
+      [arr[i], arr[minIdx]] = [arr[minIdx], arr[i]];
+    }
+  }
+  return arr;
+}`;
+
+  const codeArea = document.getElementById('codeArea');
+  const gutter = document.getElementById('gutter');
+  codeArea.value = defaultCode;
+
+  function updateGutter(){
+    const lines = codeArea.value.split('\n').length;
+    let out = '';
+    for(let i=1;i<=lines;i++) out += i + '\n';
+    gutter.textContent = out;
+  }
+  codeArea.addEventListener('input', updateGutter);
+  codeArea.addEventListener('scroll', ()=>{ gutter.scrollTop = codeArea.scrollTop; });
+  updateGutter();
+
+  function resetCode(){
+    codeArea.value = defaultCode;
+    updateGutter();
+  }
+
+  const testCases = [
+    { input: [64, 25, 12, 22, 11], expected: [11, 12, 22, 25, 64] },
+    { input: [5, 1, 4, 2, 8], expected: [1, 2, 4, 5, 8] },
+    { input: [1], expected: [1] },
+    { input: [3, 3, 2, 1], expected: [1, 2, 3, 3] },
+    { input: [-5, 10, -2, 0], expected: [-5, -2, 0, 10] },
+  ];
+
+  function showConsoleTab(which){
+    document.getElementById('tabResults').classList.toggle('active', which==='results');
+    document.getElementById('tabOutput').classList.toggle('active', which==='output');
+    document.getElementById(which==='results' ? 'resultsPane' : 'outputPane')?.scrollIntoView();
+  }
+
+  function execute(){
+    const consoleBody = document.getElementById('consoleBody');
+    let logs = [];
+    const fakeConsole = { log: (...args)=> logs.push(args.map(a=>String(a)).join(' ')) };
+
+    let fn;
+    try{
+      const factory = new Function('console', codeArea.value + '\nreturn selectionSort;');
+      fn = factory(fakeConsole);
+    }catch(e){
+      consoleBody.innerHTML = `<div class="result-line bad">Compile error: ${escapeHtml(e.message)}</div>`;
+      return;
+    }
+
+    if(typeof fn !== 'function'){
+      consoleBody.innerHTML = `<div class="result-line bad">Could not find a function named <b>selectionSort</b>.</div>`;
+      return;
+    }
+
+    let html = '';
+    let passCount = 0;
+    testCases.forEach((tc, i)=>{
+      let resultArr, error = null;
+      try{
+        resultArr = fn([...tc.input]);
+      }catch(e){
+        error = e.message;
+      }
+      const pass = !error && JSON.stringify(resultArr) === JSON.stringify(tc.expected);
+      if(pass) passCount++;
+      html += `<span class="case-pill ${pass ? 'pass':'fail'}">${pass ? '✓' : '✗'} Case ${i+1}</span>`;
+    });
+
+    html += `<div style="margin-top:10px;">`;
+    testCases.forEach((tc, i)=>{
+      let resultArr, error = null;
+      try{ resultArr = fn([...tc.input]); }catch(e){ error = e.message; }
+      const pass = !error && JSON.stringify(resultArr) === JSON.stringify(tc.expected);
+      html += `<div class="result-line ${pass?'ok':'bad'}">
+        <span class="k">Case ${i+1}</span> — input: [${tc.input.join(', ')}] &rarr; ` +
+        (error ? `runtime error: ${escapeHtml(error)}` : `got: [${resultArr.join(', ')}], expected: [${tc.expected.join(', ')}]`) +
+        `</div>`;
+    });
+    html += `</div>`;
+    if(logs.length){
+      html += `<div style="margin-top:10px; color:var(--text-faint);">console: ${escapeHtml(logs.join(' | '))}</div>`;
+    }
+    html += `<div style="margin-top:12px; font-weight:600; color:${passCount===testCases.length?'var(--sage)':'var(--amber)'}">
+      ${passCount} / ${testCases.length} test cases passed
+    </div>`;
+
+    consoleBody.innerHTML = html;
+  }
+
+  function escapeHtml(s){
+    return s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+
+  function runCode(){ execute(); }
+  function submitCode(){
+    execute();
+    const consoleBody = document.getElementById('consoleBody');
+    consoleBody.innerHTML = `<div class="result-line ok" style="margin-bottom:8px;">Submission recorded (demo only — nothing is sent to a server).</div>` + consoleBody.innerHTML;
+  }
+</script>
+
+</body>
+</html>

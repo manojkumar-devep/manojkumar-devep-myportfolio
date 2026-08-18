@@ -572,33 +572,6 @@
       overflow: hidden;
     }
 
-    .project-thumb,
-    .project-preview {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      opacity: 0.85;
-      transition: transform 0.35s ease, opacity 0.35s ease;
-      z-index: 1;
-      background: #000;
-    }
-
-    .thumb:hover .project-thumb,
-    .thumb:hover .project-preview {
-      transform: scale(1.05);
-      opacity: 1;
-    }
-
-    .project-preview {
-      display: block;
-    }
-
-    .project-preview:not([src]) {
-      display: none;
-    }
-
     /* Play Button Hover Effect */
     .thumb::before {
       content: '\f04b';
@@ -976,67 +949,6 @@
     .modal-save { flex: 1; background: var(--color-primary); color: #000; border: none; border-radius: 4px; padding: 12px; font-size: 14px; font-weight: 600; cursor: pointer; }
     .modal-cancel { background: transparent; color: var(--text-muted); border: 1px solid var(--border-color); border-radius: 4px; padding: 12px 20px; font-size: 14px; cursor: pointer; }
     .modal-cancel:hover { color: #fff; background: rgba(255,255,255,0.02); }
-
-    .preview-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.92);
-      backdrop-filter: blur(10px);
-      align-items: center;
-      justify-content: center;
-      z-index: 110;
-      padding: 1rem;
-    }
-    .preview-overlay.open {
-      display: flex;
-    }
-
-    .preview-content {
-      position: relative;
-      width: 100%;
-      max-width: 960px;
-      background: rgba(13, 16, 24, 0.95);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 16px;
-      overflow: hidden;
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
-    }
-
-    .preview-close {
-      position: absolute;
-      top: 14px;
-      right: 14px;
-      width: 40px;
-      height: 40px;
-      border: none;
-      border-radius: 999px;
-      background: rgba(255, 255, 255, 0.12);
-      color: #ffffff;
-      font-size: 28px;
-      line-height: 1;
-      cursor: pointer;
-      z-index: 20;
-    }
-
-    .preview-close:hover {
-      background: rgba(255, 255, 255, 0.2);
-    }
-
-    .preview-content video {
-      width: 100%;
-      height: auto;
-      display: block;
-      background: #000;
-    }
-
-    .preview-title {
-      padding: 16px 20px;
-      color: #f8fafc;
-      font-size: 16px;
-      font-weight: 600;
-      border-top: 1px solid rgba(255, 255, 255, 0.08);
-    }
 
     @media (max-width: 768px) {
       .wrapper {
@@ -1470,54 +1382,18 @@
       
       <div class="modal-btns">
         <button class="modal-cancel" onclick="closeModal()">Cancel</button>
-        <button class="modal-save" id="save-project-button" onclick="saveProject()">Save Project</button>
+        <button class="modal-save" onclick="saveProject()">Save Project</button>
       </div>
-      <div class="modal-status" id="upload-status" aria-live="polite"></div>
-    </div>
-  </div>
-
-  <div class="preview-overlay" id="preview-overlay" onclick="closePreview(event)">
-    <button class="preview-close" onclick="closePreview(event)">&times;</button>
-    <div class="preview-content">
-      <video id="preview-video" controls autoplay muted playsinline></video>
-      <div class="preview-title" id="preview-title"></div>
     </div>
   </div>
 
   <script>
     const STORAGE_KEY = 'portfolioProjects';
     const ADMIN_PASSWORD = 'manoj2005';
-    const CLOUDINARY_CLOUD_NAME = 'YOUR_CLOUD_NAME';
-    const CLOUDINARY_UPLOAD_PRESET = 'YOUR_UNSIGNED_UPLOAD_PRESET';
-    const USE_CLOUDINARY = false; // Set to true after you configure Cloudinary
-    const LOCAL_STORAGE_MAX_SIZE = 2 * 1024 * 1024; // 2MB cap for safe browser storage
     const urlParams = new URLSearchParams(window.location.search);
     const isAdmin = urlParams.get('admin') === '1';
     const shouldOpenModal = urlParams.get('open') === 'project';
-
-    let projects = [];
-    let isSaving = false;
-
-    function setSavingState(value, message = '') {
-      isSaving = value;
-      const saveButton = document.getElementById('save-project-button');
-      const status = document.getElementById('upload-status');
-      if (saveButton) {
-        saveButton.disabled = Boolean(value);
-        saveButton.textContent = value ? 'Saving...' : 'Save Project';
-      }
-      if (status) {
-        status.textContent = message;
-      }
-    }
-    try {
-      const stored = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-      projects = Array.isArray(stored) ? stored : [];
-    } catch (error) {
-      console.warn('portfolioProjects parse failed, resetting to empty array', error);
-      projects = [];
-      localStorage.removeItem(STORAGE_KEY);
-    }
+    let projects = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
 
     const menuToggle = document.getElementById('menu-toggle');
     const menuClose = document.getElementById('menu-close');
@@ -1577,9 +1453,8 @@
       document.getElementById('proj-type').value = 'reel';
     }
 
-    async function saveProject() {
-      if (!isAdmin || isSaving) return;
-      setSavingState(true, 'Saving project...');
+    function saveProject() {
+      if (!isAdmin) return;
 
       const title = document.getElementById('proj-title').value.trim();
       const url = document.getElementById('proj-url').value.trim();
@@ -1589,151 +1464,25 @@
 
       if (!title || (!url && !file)) {
         alert('Please provide a title and either a URL or a video file.');
-        setSavingState(false, '');
         return;
       }
 
-      let mediaUrl = url;
-      try {
-        if (file) {
-          if (USE_CLOUDINARY) {
-            setSavingState(true, 'Uploading video to Cloudinary...');
-            const result = await uploadFileToCloudinary(file);
-            mediaUrl = result.secure_url || result.url;
-            const thumbnailUrl = result.public_id ? getCloudinaryThumbnail(result.public_id) : '';
-            addProject({
-              title,
-              url: mediaUrl,
-              type,
-              meta,
-              id: Date.now(),
-              source: 'cloudinary',
-              publicId: result.public_id,
-              thumbnail: thumbnailUrl
-            });
-            setSavingState(false, 'Project uploaded and saved.');
-            return;
-          } else {
-if (file.size > LOCAL_STORAGE_MAX_SIZE) {
-            alert('Selected video is too large for localStorage testing. Use a public URL, a smaller file, or enable Cloudinary uploads by setting USE_CLOUDINARY = true.');
-              setSavingState(false, '');
-              return;
-            }
-
-            const reader = new FileReader();
-            reader.onload = function () {
-              addProject({
-                title,
-                url: reader.result,
-                type,
-                meta,
-                id: Date.now(),
-                source: 'local-file',
-                thumbnail: ''
-              });
-              setSavingState(false, 'Saved locally for testing.');
-            };
-            reader.onerror = function () {
-              alert('Unable to read the selected file. Please try again.');
-              setSavingState(false, '');
-            };
-            reader.readAsDataURL(file);
-            return;
-          }
-        }
-
-        addProject({
-          title,
-          url: mediaUrl,
-          type,
-          meta,
-          id: Date.now(),
-          source: file ? (USE_CLOUDINARY ? 'cloudinary' : 'local-file') : 'external-link',
-          thumbnail: ''
-        });
-        setSavingState(false, 'Project saved successfully.');
-      } catch (error) {
-        alert('Unable to save project: ' + (error.message || error));
-        setSavingState(false, 'Save failed.');
-      }
-    }
-
-    async function uploadFileToCloudinary(file) {
-      if (!CLOUDINARY_CLOUD_NAME || !CLOUDINARY_UPLOAD_PRESET) {
-        throw new Error('Cloudinary is not configured. Set CLOUDINARY_CLOUD_NAME and CLOUDINARY_UPLOAD_PRESET.');
-      }
-
-      const formData = new FormData();
-      formData.append('file', file);
-      formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
-      formData.append('resource_type', 'video');
-
-      const response = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/video/upload`, {
-        method: 'POST',
-        body: formData
+      const mediaUrl = file ? URL.createObjectURL(file) : url;
+      projects.push({
+        title,
+        url: mediaUrl,
+        type,
+        meta,
+        id: Date.now(),
+        hasFile: !!file
       });
-
-      if (!response.ok) {
-        const text = await response.text();
-        throw new Error(response.status + ' ' + text);
-      }
-      return response.json();
-    }
-
-    function addProject(project) {
-      projects.push(project);
       localStorage.setItem(STORAGE_KEY, JSON.stringify(projects));
       renderProjects();
       closeModal();
     }
 
-    function getCloudinaryThumbnail(publicId) {
-      if (!CLOUDINARY_CLOUD_NAME || !publicId) return '';
-      return `https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}/video/upload/w_400,h_225,c_fill/${publicId}.jpg`;
-    }
-
-    function escapeHtml(text) {
-      return text.replace(/[&<>"]+/g, match => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[match]);
-    }
-
-    function openPreview(url, title) {
-      const preview = document.getElementById('preview-overlay');
-      const video = document.getElementById('preview-video');
-      const previewTitle = document.getElementById('preview-title');
-      if (!preview || !video) return;
-
-      video.src = url;
-      previewTitle.textContent = title;
-      preview.classList.add('open');
-      video.play().catch(() => {});
-    }
-
-    function closePreview(event) {
-      const preview = document.getElementById('preview-overlay');
-      const video = document.getElementById('preview-video');
-      if (!preview || !video) return;
-
-      const clickedOverlay = event.currentTarget && event.currentTarget.id === 'preview-overlay';
-      const clickedCloseButton = event.currentTarget && event.currentTarget.classList.contains('preview-close');
-      const clickedInsideContent = event.target.closest('.preview-content');
-
-      if (clickedOverlay && clickedInsideContent && !clickedCloseButton) {
-        return;
-      }
-
-      event.stopPropagation();
-      preview.classList.remove('open');
-      video.pause();
-      video.src = '';
-    }
-
     function getPlatform(type) {
-      return {
-        reel: 'Instagram Reel Production',
-        short: 'YouTube Shorts Element',
-        long: 'Cinema Long-Form',
-        brand: 'Corporate Brand Asset'
-      }[type];
+      return { reel: 'Instagram Reel Production', short: 'YouTube Shorts Element', long: 'Cinema Long-Form', brand: 'Corporate Brand Asset' }[type];
     }
 
     function deleteProject(id) {
@@ -1745,9 +1494,8 @@ if (file.size > LOCAL_STORAGE_MAX_SIZE) {
 
     function renderProjects() {
       const grid = document.getElementById('projects-grid');
-      if (!grid) return;
-
-      const cardsToShow = Array.isArray(projects) && projects.length ? projects : [
+      const displayProjects = projects.length ? projects : [];
+      const defaultCards = [
         {
           title: 'Brand Story Reel',
           url: 'https://instagram.com/manojkumar_mycharla_888',
@@ -1767,27 +1515,23 @@ if (file.size > LOCAL_STORAGE_MAX_SIZE) {
           meta: 'Cinema Long-Form'
         }
       ];
+      const cardsToShow = displayProjects.length ? displayProjects : defaultCards;
 
-      grid.innerHTML = (cardsToShow || []).map(p => {
-        const project = p || {};
-        const thumb = thumbMap[project.type] || thumbMap.reel;
-        const mediaUrl = project.url || '';
-        const thumbnail = project.thumbnail || '';
-        const isVideoPreview = project.source === 'cloudinary' || project.source === 'local-file';
-        const deleteButton = isAdmin && project.id ? `<button class="delete-btn" onclick="event.stopPropagation(); deleteProject(${project.id})"><i class="fa-solid fa-trash-can"></i> Remove</button>` : '';
-        const previewAction = isVideoPreview ? `openPreview(${JSON.stringify(mediaUrl)}, ${JSON.stringify(project.title || 'Project Preview')})` : (mediaUrl ? `window.open(${JSON.stringify(mediaUrl)}, '_blank')` : 'return false;');
+      grid.innerHTML = cardsToShow.map(p => {
+        const t = thumbMap[p.type];
+        const mediaUrl = p.url || '';
+        const deleteButton = isAdmin && p.id ? `<button class="delete-btn" onclick="event.stopPropagation(); deleteProject(${p.id})"><i class="fa-solid fa-trash-can"></i> Remove</button>` : '';
+        const openAction = mediaUrl ? `window.open('${mediaUrl}', '_blank')` : 'return false;';
         return `
           <div class="work-card">
-            <div class="thumb ${thumb.cls}" onclick="${previewAction}">
-              ${isVideoPreview ? `<video class="project-preview" src="${mediaUrl}" muted playsinline loop preload="metadata"></video>` : ''}
-              ${thumbnail && !isVideoPreview ? `<img class="project-thumb" src="${thumbnail}" alt="${project.title || 'Project'} thumbnail" />` : ''}
-              ${!isVideoPreview && !thumbnail ? `<i class="${thumb.icon} thumb-icon"></i>` : ''}
-              <span class="type-badge type-${project.type || 'reel'}">${thumb.label}</span>
+            <div class="thumb ${t.cls}" onclick="${openAction}">
+              <i class="${t.icon} thumb-icon"></i>
+              <span class="type-badge type-${p.type}">${t.label}</span>
               ${deleteButton}
             </div>
             <div class="card-info">
-              <div class="card-title">${project.title || 'Untitled Project'}</div>
-              <div class="card-meta"><i class="fa-solid fa-chart-simple" style="font-size:10px;color:var(--color-primary)"></i> ${project.meta || 'Production Work'}</div>
+              <div class="card-title">${p.title}</div>
+              <div class="card-meta"><i class="fa-solid fa-chart-simple" style="font-size:10px;color:var(--color-primary)"></i> ${p.meta}</div>
             </div>
           </div>`;
       }).join('');
