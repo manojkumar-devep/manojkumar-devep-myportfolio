@@ -223,159 +223,7 @@
     .nav-toggle{display:block;}
   }
 
-  /* MOBILE VIEW & QR MODAL STYLES */
-  .nav-mobile-btn{
-    background:linear-gradient(90deg, var(--func), var(--type));
-    color:#061018;border:none;border-radius:6px;
-    padding:6px 12px;font-family:'JetBrains Mono',monospace;
-    font-size:12px;font-weight:700;cursor:pointer;
-    display:inline-flex;align-items:center;gap:6px;
-    transition:transform .2s ease, box-shadow .2s ease;
-  }
-  .nav-mobile-btn:hover{transform:translateY(-1px);box-shadow:0 6px 18px -6px rgba(130,170,255,0.7);}
-  
-  .mobile-float-btn{
-    position:fixed;bottom:24px;right:24px;z-index:900;
-    background:linear-gradient(135deg, rgba(19,26,41,0.95), rgba(10,14,20,0.95));
-    border:1px solid rgba(130,170,255,0.4);border-radius:30px;
-    padding:10px 18px 10px 14px;display:flex;align-items:center;gap:8px;
-    color:var(--text);font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;
-    cursor:pointer;box-shadow:0 12px 30px -8px rgba(0,0,0,0.6), 0 0 20px -5px rgba(130,170,255,0.4);
-    backdrop-filter:blur(10px);transition:transform .25s ease, box-shadow .25s ease, border-color .25s;
-  }
-  .mobile-float-btn:hover{
-    transform:translateY(-3px) scale(1.03);
-    border-color:var(--type);
-    box-shadow:0 16px 36px -8px rgba(130,170,255,0.55);
-  }
-  .mobile-float-btn .mobile-icon{font-size:16px;}
-  .mobile-float-btn .mobile-pulse{
-    width:8px;height:8px;border-radius:50%;background:#27c93f;
-    box-shadow:0 0 8px #27c93f;animation:mobileDotPulse 1.8s ease-in-out infinite;
-  }
-  @keyframes mobileDotPulse{
-    0%,100%{transform:scale(1);opacity:.9;}
-    50%{transform:scale(1.4);opacity:.4;}
-  }
 
-  /* QR Code & Mobile Modal */
-  .mobile-modal{
-    position:fixed;inset:0;z-index:2500;
-    display:none;align-items:center;justify-content:center;
-    padding:20px;
-  }
-  .mobile-modal.open{display:flex;}
-  .mobile-modal-backdrop{
-    position:absolute;inset:0;background:rgba(5,9,16,0.75);
-    backdrop-filter:blur(12px);
-  }
-  .mobile-modal-dialog{
-    position:relative;z-index:1;width:min(440px, 100%);
-    background:linear-gradient(180deg, rgba(19,26,41,0.98), rgba(11,16,26,0.99));
-    border:1px solid rgba(130,170,255,0.3);border-radius:18px;
-    padding:28px 24px;text-align:center;
-    box-shadow:0 30px 80px -20px rgba(0,0,0,0.8), 0 0 40px -10px rgba(130,170,255,0.3);
-    animation:modalPop .35s cubic-bezier(.2,.8,.2,1) both;
-  }
-  @keyframes modalPop{
-    from{opacity:0;transform:scale(.92) translateY(14px);}
-    to{opacity:1;transform:scale(1) translateY(0);}
-  }
-  .mobile-modal-close{
-    position:absolute;top:16px;right:16px;
-    background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);
-    color:var(--text);font-size:20px;width:32px;height:32px;border-radius:50%;
-    display:flex;align-items:center;justify-content:center;cursor:pointer;
-    transition:background .2s, transform .2s;
-  }
-  .mobile-modal-close:hover{background:rgba(255,255,255,0.15);transform:scale(1.08);}
-  .mobile-modal-badge{
-    display:inline-block;padding:4px 12px;border-radius:20px;
-    background:rgba(130,170,255,0.12);border:1px solid rgba(130,170,255,0.3);
-    color:var(--type);font-family:'JetBrains Mono',monospace;font-size:11px;
-    margin-bottom:12px;letter-spacing:.04em;text-transform:uppercase;
-  }
-  .mobile-modal-title{
-    font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:700;
-    color:var(--text);margin-bottom:8px;
-  }
-  .mobile-modal-desc{
-    font-size:13px;color:var(--text-dim);line-height:1.5;margin-bottom:18px;
-  }
-  .mobile-qr-wrapper{
-    display:flex;justify-content:center;margin-bottom:18px;
-  }
-  .mobile-qr-border{
-    position:relative;padding:12px;background:#0a0e14;
-    border-radius:14px;border:2px solid var(--func);
-    box-shadow:0 10px 30px -10px rgba(130,170,255,0.5);
-    overflow:hidden;
-  }
-  .mobile-qr-img{
-    display:block;width:190px;height:190px;border-radius:8px;background:#fff;
-  }
-  .mobile-scan-line{
-    position:absolute;left:0;right:0;height:2px;
-    background:linear-gradient(90deg, transparent, var(--string), var(--type), transparent);
-    box-shadow:0 0 10px var(--string);
-    animation:scanLineMove 2.2s ease-in-out infinite alternate;
-  }
-  @keyframes scanLineMove{
-    0%{top:10%;opacity:.3;}
-    100%{top:90%;opacity:1;}
-  }
-  .mobile-url-box{
-    display:flex;gap:8px;background:#0a0e14;border:1px solid var(--surface-line);
-    border-radius:8px;padding:6px;margin-bottom:14px;
-  }
-  .mobile-url-box input{
-    flex:1;background:transparent;border:none;color:var(--text);
-    font-family:'JetBrains Mono',monospace;font-size:11.5px;padding:6px 8px;
-    outline:none;
-  }
-  .mobile-copy-btn{
-    background:linear-gradient(90deg, var(--func), var(--type));
-    color:#061018;border:none;border-radius:6px;padding:6px 14px;
-    font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;
-    cursor:pointer;white-space:nowrap;transition:transform .2s, filter .2s;
-  }
-  .mobile-copy-btn:hover{filter:brightness(1.1);transform:scale(1.02);}
-  .mobile-quick-actions{
-    display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px;
-  }
-  .mobile-action-btn{
-    padding:10px;border-radius:8px;font-family:'JetBrains Mono',monospace;
-    font-size:11.5px;font-weight:600;display:flex;align-items:center;
-    justify-content:center;gap:6px;text-decoration:none;cursor:pointer;
-    border:1px solid transparent;transition:transform .2s ease, box-shadow .2s;
-  }
-  .mobile-action-btn.wa{
-    background:rgba(37,211,102,0.12);border-color:rgba(37,211,102,0.3);color:#25d366;
-  }
-  .mobile-action-btn.wa:hover{background:rgba(37,211,102,0.22);transform:translateY(-2px);}
-  .mobile-action-btn.sim{
-    background:rgba(130,170,255,0.12);border-color:rgba(130,170,255,0.3);color:var(--func);
-  }
-  .mobile-action-btn.sim:hover{background:rgba(130,170,255,0.22);transform:translateY(-2px);}
-
-  /* MOBILE SIMULATOR MODE ON DESKTOP */
-  body.mobile-sim-mode{
-    max-width:420px !important;margin:40px auto 60px !important;
-    border:14px solid #1a2233 !important;border-radius:48px !important;
-    box-shadow:0 0 0 2px rgba(130,170,255,0.4), 0 30px 100px -20px rgba(0,0,0,0.9) !important;
-    overflow-x:hidden !important;
-    position:relative;
-  }
-  .sim-banner{
-    display:none;position:fixed;top:0;left:0;right:0;z-index:99999;
-    background:#0f172a;color:#dbe4f0;border-bottom:1px solid rgba(130,170,255,0.3);
-    padding:10px 20px;text-align:center;font-family:'JetBrains Mono',monospace;font-size:12px;
-  }
-  body.mobile-sim-mode .sim-banner{display:flex;align-items:center;justify-content:space-between;}
-  .sim-exit-btn{
-    background:linear-gradient(90deg,var(--func),var(--type));color:#061018;border:none;
-    border-radius:6px;padding:6px 12px;font-weight:700;cursor:pointer;font-family:inherit;font-size:12px;
-  }
 
   /* ENHANCED MOBILE RESPONSIVENESS */
   @media(max-width:768px){
@@ -392,8 +240,7 @@
     .nav-links.open{max-height:500px;}
     .nav-links li{width:100%;}
     .nav-links a{display:block;padding:14px 24px;border-bottom:1px solid rgba(255,255,255,0.05);font-size:14px;}
-    .nav-mobile-item{padding:12px 24px;}
-    .nav-mobile-btn{width:100%;justify-content:center;padding:10px;}
+
     
     section{padding:70px 0;}
     .hero{padding-top:85px;min-height:auto;padding-bottom:50px;}
@@ -415,8 +262,7 @@
     .ccard h4{font-size:14px;}
     .ccard p{font-size:11.5px;}
 
-    .mobile-quick-actions{grid-template-columns:1fr;}
-    .mobile-float-btn{bottom:16px;right:16px;padding:8px 14px 8px 10px;font-size:12px;}
+
   }
   
   @media(max-width:480px){
@@ -1176,10 +1022,6 @@
 </head>
 <body>
 
-<div class="sim-banner" id="simBanner">
-  <span>📱 Mobile Simulation Active (Viewing at 414px)</span>
-  <button type="button" class="sim-exit-btn" id="simExitBtn">Exit Mobile View ✕</button>
-</div>
 
 <div class="movie-intro" id="movieIntro" aria-hidden="true">
   <div class="intro-title">Manojkumar</div>
@@ -1190,12 +1032,6 @@
 <div class="particle-field" id="particle-field"></div>
 <div id="burst-layer"></div>
 <div id="cursor-glow"></div>
-
-<button class="mobile-float-btn" id="mobileQrTrigger" type="button" title="View on Mobile (QR Code)">
-  <span class="mobile-icon">📱</span>
-  <span class="mobile-text">View on Phone</span>
-  <span class="mobile-pulse"></span>
-</button>
 
 <nav>
   <div class="wrap">
@@ -1208,7 +1044,7 @@
       <li><a href="#projects">Past Projects</a></li>
       <li><a href="#certificates">Certificates</a></li>
       <li><a href="#contact">Contact</a></li>
-      <li class="nav-mobile-item"><button class="nav-mobile-btn" id="navMobileBtn" type="button">📱 View on Phone</button></li>
+
     </ul>
   </div>
 </nav>
@@ -1668,6 +1504,17 @@
   © 2026 Manojkumar Mycharla — built with Java-brained curiosity.
 </footer>
 
+<div class="certificate-modal" id="certificate-modal" aria-hidden="true">
+  <div class="certificate-modal-panel">
+    <div class="certificate-modal-head">
+      <div class="certificate-modal-title" id="certificate-modal-title">Certificate Preview</div>
+      <button type="button" class="certificate-modal-close" id="certificate-modal-close">Close</button>
+    </div>
+    <div class="certificate-modal-body" id="certificate-modal-body"></div>
+  </div>
+</div>
+
+
 <script>
   if (window.history && window.history.scrollRestoration) {
     window.history.scrollRestoration = 'manual';
@@ -1677,18 +1524,28 @@
   // mobile nav toggle
   const navToggle = document.getElementById('navToggle');
   const navLinks = document.getElementById('navLinks');
-  navToggle.addEventListener('click', ()=>{
-    const isOpen = navLinks.classList.toggle('open');
-    navToggle.classList.toggle('open', isOpen);
-    navToggle.setAttribute('aria-expanded', isOpen);
-  });
-  navLinks.querySelectorAll('a').forEach(a=>{
-    a.addEventListener('click', ()=>{
-      navLinks.classList.remove('open');
-      navToggle.classList.remove('open');
-      navToggle.setAttribute('aria-expanded','false');
+  if(navToggle && navLinks){
+    navToggle.addEventListener('click', (e)=>{
+      e.stopPropagation();
+      const isOpen = navLinks.classList.toggle('open');
+      navToggle.classList.toggle('open', isOpen);
+      navToggle.setAttribute('aria-expanded', isOpen);
     });
-  });
+    navLinks.querySelectorAll('a').forEach(a=>{
+      a.addEventListener('click', ()=>{
+        navLinks.classList.remove('open');
+        navToggle.classList.remove('open');
+        navToggle.setAttribute('aria-expanded','false');
+      });
+    });
+    document.addEventListener('click', (e)=>{
+      if(!navLinks.contains(e.target) && !navToggle.contains(e.target)){
+        navLinks.classList.remove('open');
+        navToggle.classList.remove('open');
+        navToggle.setAttribute('aria-expanded', 'false');
+      }
+    });
+  }
 
   // trailing multicolor glow that follows touch/cursor
   const glowEl = document.getElementById('cursor-glow');
@@ -2396,149 +2253,8 @@
     showProjectPasswordMessage('');
   });
 
-  // Mobile menu hamburger toggle logic
-  const navToggle = document.getElementById('navToggle');
-  const navLinks = document.getElementById('navLinks');
-  if(navToggle && navLinks){
-    navToggle.addEventListener('click', (e)=>{
-      e.stopPropagation();
-      const isOpen = navLinks.classList.toggle('open');
-      navToggle.classList.toggle('open', isOpen);
-      navToggle.setAttribute('aria-expanded', isOpen);
-    });
-    // Close nav when clicking any link
-    navLinks.querySelectorAll('a').forEach(link=>{
-      link.addEventListener('click', ()=>{
-        navLinks.classList.remove('open');
-        navToggle.classList.remove('open');
-        navToggle.setAttribute('aria-expanded', 'false');
-      });
-    });
-    document.addEventListener('click', (e)=>{
-      if(!navLinks.contains(e.target) && !navToggle.contains(e.target)){
-        navLinks.classList.remove('open');
-        navToggle.classList.remove('open');
-        navToggle.setAttribute('aria-expanded', 'false');
-      }
-    });
-  }
-
-  // Mobile View QR Modal & Simulator Logic
-  const mobileModal = document.getElementById('mobileModal');
-  const mobileModalClose = document.getElementById('mobileModalClose');
-  const mobileModalBackdrop = document.getElementById('mobileModalBackdrop');
-  const mobileQrTrigger = document.getElementById('mobileQrTrigger');
-  const navMobileBtn = document.getElementById('navMobileBtn');
-  const mobileQrImage = document.getElementById('mobileQrImage');
-  const mobileUrlInput = document.getElementById('mobileUrlInput');
-  const copyMobileUrlBtn = document.getElementById('copyMobileUrlBtn');
-  const waShareBtn = document.getElementById('waShareBtn');
-  const toggleMobileSimBtn = document.getElementById('toggleMobileSimBtn');
-  const simExitBtn = document.getElementById('simExitBtn');
-
-  // Determine production mobile live URL
-  function getMobileUrl(){
-    if(window.location.protocol.startsWith('http')){
-      return window.location.href;
-    }
-    return 'https://manojkumar-devep.github.io/manojkumar-devep-myportfolio/';
-  }
-
-  function openMobileModal(){
-    if(!mobileModal) return;
-    const url = getMobileUrl();
-    if(mobileUrlInput) mobileUrlInput.value = url;
-    if(mobileQrImage){
-      mobileQrImage.src = `https://api.qrserver.com/v1/create-qr-code/?size=260x260&margin=8&data=${encodeURIComponent(url)}`;
-    }
-    if(waShareBtn){
-      waShareBtn.href = `https://api.whatsapp.com/send?text=${encodeURIComponent('Check out Manojkumar Mycharla’s Portfolio: ' + url)}`;
-    }
-    mobileModal.classList.add('open');
-    if(navLinks) navLinks.classList.remove('open');
-    if(navToggle) navToggle.classList.remove('open');
-  }
-
-  function closeMobileModal(){
-    if(mobileModal) mobileModal.classList.remove('open');
-  }
-
-  mobileQrTrigger?.addEventListener('click', openMobileModal);
-  navMobileBtn?.addEventListener('click', openMobileModal);
-  mobileModalClose?.addEventListener('click', closeMobileModal);
-  mobileModalBackdrop?.addEventListener('click', closeMobileModal);
-
-  copyMobileUrlBtn?.addEventListener('click', async ()=>{
-    const url = mobileUrlInput ? mobileUrlInput.value : getMobileUrl();
-    try {
-      await navigator.clipboard.writeText(url);
-      copyMobileUrlBtn.textContent = '✓ Copied!';
-      setTimeout(()=>{ copyMobileUrlBtn.textContent = 'Copy Link'; }, 2000);
-    } catch(err){
-      if(mobileUrlInput){
-        mobileUrlInput.select();
-        document.execCommand('copy');
-        copyMobileUrlBtn.textContent = '✓ Copied!';
-        setTimeout(()=>{ copyMobileUrlBtn.textContent = 'Copy Link'; }, 2000);
-      }
-    }
-  });
-
-  toggleMobileSimBtn?.addEventListener('click', ()=>{
-    closeMobileModal();
-    document.body.classList.toggle('mobile-sim-mode');
-    window.scrollTo({top: 0, behavior: 'smooth'});
-  });
-
-  simExitBtn?.addEventListener('click', ()=>{
-    document.body.classList.remove('mobile-sim-mode');
-  });
-
   renderProjects();
   renderCertificates();
 </script>
-
-<div class="certificate-modal" id="certificate-modal" aria-hidden="true">
-  <div class="certificate-modal-panel">
-    <div class="certificate-modal-head">
-      <div class="certificate-modal-title" id="certificate-modal-title">Certificate Preview</div>
-      <button type="button" class="certificate-modal-close" id="certificate-modal-close">Close</button>
-    </div>
-    <div class="certificate-modal-body" id="certificate-modal-body"></div>
-  </div>
-</div>
-
-<!-- Mobile Access Modal -->
-<div class="mobile-modal" id="mobileModal" aria-hidden="true">
-  <div class="mobile-modal-backdrop" id="mobileModalBackdrop"></div>
-  <div class="mobile-modal-dialog">
-    <button class="mobile-modal-close" id="mobileModalClose" type="button" aria-label="Close modal">&times;</button>
-    <div class="mobile-modal-badge">⚡ Instant Mobile Access</div>
-    <h3 class="mobile-modal-title">Open on Mobile Device</h3>
-    <p class="mobile-modal-desc">Scan with your smartphone camera to view this portfolio live on your phone:</p>
-    
-    <div class="mobile-qr-wrapper">
-      <div class="mobile-qr-border">
-        <img id="mobileQrImage" class="mobile-qr-img" src="" alt="Mobile Portfolio QR Code">
-        <div class="mobile-scan-line"></div>
-      </div>
-    </div>
-
-    <div class="mobile-url-box">
-      <input type="text" id="mobileUrlInput" readonly value="https://manojkumar-devep.github.io/manojkumar-devep-myportfolio/">
-      <button type="button" id="copyMobileUrlBtn" class="mobile-copy-btn">Copy Link</button>
-    </div>
-
-    <div class="mobile-quick-actions">
-      <a id="waShareBtn" class="mobile-action-btn wa" target="_blank" rel="noopener noreferrer" href="#">
-        <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.693.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/></svg>
-        Send to WhatsApp
-      </a>
-      <button type="button" id="toggleMobileSimBtn" class="mobile-action-btn sim">
-        📱 Preview Phone Screen
-      </button>
-    </div>
-  </div>
-</div>
 </body>
 </html>
