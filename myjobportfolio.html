@@ -22,12 +22,13 @@
     --tag:#ff5c93;
   }
   *{margin:0;padding:0;box-sizing:border-box;}
-  html{scroll-behavior:smooth;}
+  html{scroll-behavior:smooth;overscroll-behavior-y:none;}
   body{
     background:var(--bg);
     color:var(--text);
     font-family:'Inter',sans-serif;
     overflow-x:hidden;
+    overscroll-behavior-y:none;
     min-height:100vh;
     position:relative;
     isolation:isolate;
@@ -486,6 +487,24 @@
   .reveal.in{opacity:1;transform:translateY(0) scale(1);}
 
   /* ABOUT */
+  .intro-photo-frame{
+    width:min(100%,760px);margin:0 auto 34px;padding:4px;border-radius:20px;
+    background:conic-gradient(from var(--photo-angle),var(--keyword),var(--func),var(--string),var(--number),var(--type),var(--keyword));
+    box-shadow:0 22px 60px -24px rgba(130,170,255,.75),0 0 32px rgba(199,146,234,.18);
+    animation:photoBorderSpin 7s linear infinite,photoFloat 4.5s ease-in-out infinite;
+    position:relative;isolation:isolate;
+  }
+  .intro-photo-frame::before{
+    content:'';position:absolute;inset:-8px;border-radius:26px;z-index:-1;
+    background:inherit;filter:blur(18px);opacity:.28;
+  }
+  .intro-photo{
+    display:block;width:100%;height:auto;border-radius:16px;border:2px solid rgba(10,14,20,.92);
+  }
+  @property --photo-angle{syntax:'<angle>';initial-value:0deg;inherits:false;}
+  @keyframes photoBorderSpin{to{--photo-angle:360deg;}}
+  @keyframes photoFloat{0%,100%{transform:translateY(0);}50%{transform:translateY(-8px);}}
+  @media(max-width:640px){.intro-photo-frame{margin-bottom:26px;border-radius:14px}.intro-photo{border-radius:10px}}
   .about-card{
     background:var(--surface);border:1px solid var(--surface-line);border-radius:10px;padding:30px 32px;
     font-family:'JetBrains Mono',monospace;font-size:14.5px;line-height:1.9;color:var(--text-dim);
@@ -687,6 +706,8 @@
   .certificate-media iframe,.certificate-media object{width:100%;height:220px;border:0;background:#07111b;}
   .certificate-title{font-size:16px;font-weight:700;color:var(--text);}
   .certificate-type{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-dim);}
+  .certificate-meta{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--text-dim);}
+  .verified-badge{display:inline-flex;align-items:center;gap:5px;padding:5px 8px;border:1px solid rgba(195,230,141,.35);border-radius:999px;color:var(--string);background:rgba(195,230,141,.08);font-weight:700;}
   .certificate-empty{
     border:1px dashed rgba(130,170,255,.38);border-radius:12px;padding:22px;text-align:center;
     color:var(--text-dim);font-family:'JetBrains Mono',monospace;background:rgba(17,24,39,.65);
@@ -846,6 +867,18 @@
   @media(max-width:900px){.project-layout{grid-template-columns:1fr;}.upload-form{position:static;}}
   @media(max-width:640px){.field-row{grid-template-columns:1fr;}}
 
+  /* VIDEO & MOTION SHOWCASE */
+  .media-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px;margin-top:24px;}
+  .media-card{background:var(--surface);border:1px solid var(--surface-line);border-radius:12px;padding:16px;transition:transform .25s,border-color .25s,box-shadow .25s;}
+  .media-card:hover{transform:translateY(-4px);border-color:var(--keyword);box-shadow:0 18px 34px -24px rgba(199,146,234,.7);}
+  .media-embed{width:100%;aspect-ratio:16/9;border:0;border-radius:8px;background:#080d15;display:block;}
+  .media-card h3{margin:14px 0 7px;font-size:17px;}.media-card p{color:var(--text-dim);font-size:13.5px;line-height:1.6;}
+  .media-empty{grid-column:1/-1;border:1px dashed var(--surface-line);border-radius:12px;padding:30px;text-align:center;color:var(--text-dim);}
+  .media-upload-form{margin-top:22px;}
+  .project-summary{margin:12px 0 4px;color:var(--text);font-size:14px;line-height:1.65;}
+  .project-architecture{margin:6px 0 12px;color:var(--text-dim);font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.6;}
+  .footer-admin{margin-top:14px}.footer-admin .admin-toggle{font-size:11px;opacity:.55}.footer-admin .admin-toggle:hover{opacity:1}
+
 
   /* CONTACT — card grid style */
   .contact-hero{text-align:center;padding:10px 0 6px;}
@@ -969,7 +1002,7 @@
   }
 
   footer{
-    padding:36px 0 50px;text-align:center;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-dim);
+    padding:36px 0 0;text-align:center;font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1;color:var(--text-dim);overflow:hidden;
   }
 
   /* trailing multicolor glow (touch/cursor) */
@@ -1013,6 +1046,42 @@
     100%{width:120px;height:120px;opacity:0;}
   }
 
+  /* MOBILE PERFORMANCE + ACCESSIBILITY */
+  html{-webkit-text-size-adjust:100%;text-size-adjust:100%;}
+  img,video,iframe{max-width:100%;}
+  button,input,textarea,select{font:inherit;}
+  @media(max-width:768px){
+    body{overflow-wrap:anywhere;}
+    nav .wrap{height:60px;}.nav-logo{font-size:12px;max-width:calc(100% - 52px);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+    .nav-links{top:60px;max-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;}
+    .nav-links.open{max-height:calc(100dvh - 60px);}
+    .nav-links a,.nav-toggle,.btn,.project-action-btn,.project-submit,.admin-toggle,.certificate-view-btn{min-height:44px;}
+    section{padding:56px 0;scroll-margin-top:64px;}
+    .wrap{width:100%;padding-inline:max(16px,env(safe-area-inset-left));}
+    .hero{padding-top:84px;padding-bottom:44px;min-height:auto;}
+    .hero-grid{gap:26px;}.hero-photo-wrap{margin-bottom:0;}.hero-title{line-height:1.15;}
+    .hero-role{line-height:1.6;min-height:45px;}.hero-desc{max-width:100%;}
+    .terminal,.about-card,.skill-group,.project-card,.certificate-card,.media-card{border-radius:10px;}
+    .about-card,.project-card{padding:22px 18px;}.skill-group{padding:19px 17px;}
+    .intro-photo-frame{width:100%;margin-bottom:28px;animation:photoFloat 5s ease-in-out infinite;}
+    .skill-groups,.project-grid,.certificate-grid,.media-grid{grid-template-columns:minmax(0,1fr);gap:16px;}
+    .project-layout,.certificate-layout{display:block;}.upload-form,.certificate-upload-form{margin-top:20px;}
+    .project-actions{display:grid;grid-template-columns:1fr;}.project-action-btn{text-align:center;display:flex;align-items:center;justify-content:center;}
+    .certificate-media{min-height:180px;}.certificate-media img{height:auto;max-height:280px;object-fit:contain;}
+    .certificate-modal{padding:10px;}.certificate-modal-panel{padding:13px;max-height:94dvh;}.certificate-modal-body iframe{min-height:65dvh;}
+    .media-grid{margin-top:18px;}.media-card{padding:13px;}.media-embed{aspect-ratio:16/9;}
+    .field-row,.project-attachment-row{grid-template-columns:minmax(0,1fr);}.project-input,.project-textarea{font-size:16px;min-width:0;}
+    .contact-cards{grid-template-columns:repeat(2,minmax(0,1fr));}.ccard{min-width:0;}
+    .ambient::before,.ambient::after,#cursor-glow,.particle-field,.movie-intro{display:none;}
+    body::before{animation:none;inset:0;}.noise-grid{opacity:.2;}
+  }
+  @media(max-width:420px){
+    .wrap{padding-inline:14px;}.hero-title{font-size:30px;}.terminal-bar{padding-inline:10px;}.terminal-title{font-size:10px;}
+    .contact-cards{grid-template-columns:minmax(0,1fr);}.ccard p{font-size:12px;}
+    footer{padding-top:28px;font-size:11px;line-height:1.5;}
+  }
+  @media(hover:none){.project-card:hover,.media-card:hover,.certificate-card:hover,.about-card:hover,.skill-group:hover,.ccard:hover{transform:none;}}
+
   @media (prefers-reduced-motion: reduce){
     *{animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important;}
   }
@@ -1041,6 +1110,7 @@
       <li><a href="#about">About</a></li>
       <li><a href="#skills">Skills</a></li>
       <li><a href="#experience">Experience</a></li>
+      <li><a href="#media">Media</a></li>
       <li><a href="#projects">Past Projects</a></li>
       <li><a href="#certificates">Certificates</a></li>
       <li><a href="#contact">Contact</a></li>
@@ -1064,7 +1134,7 @@
       </div>
 
       <h1 class="hero-title">Manojkumar <span class="grad-word">Mycharla</span></h1>
-      <div class="hero-role"><span class="kw">Implements</span> <span id="role-cycle" class="cycle-word">Java Full Stack Developer</span></div>
+      <div class="hero-role"><span id="role-cycle" class="cycle-word">Java Full Stack &amp; Python Developer | AI/ML Enthusiast</span></div>
       <p class="hero-desc">
         Backend-focused engineer building CRUD systems and RESTful APIs with Java and Spring Boot,
         while also shaping visual storytelling through video editing, motion design, and content creation.
@@ -1089,6 +1159,9 @@
 <section id="about">
   <div class="wrap reveal">
     <div class="eyebrow">about.md</div>
+    <div class="intro-photo-frame">
+      <picture><source media="(max-width: 768px)" srcset="self-introduction-mobile.jpg"><img class="intro-photo" src="self-introduction.png" width="1254" height="1254" alt="Manojkumar Mycharla self introduction" loading="lazy" decoding="async"></picture>
+    </div>
     <h2 class="sec-title"><span class="pu">Const</span> <span class="fn">Summary</span> = {}</h2>
     <div class="about-card">
       <span class="comment">/**</span><br>
@@ -1191,7 +1264,7 @@
         <h3>Editing Tools</h3>
         <div class="tag-row">
           <span class="tag c1">CapCut</span>
-          <span class="tag c2">Premier Pro</span>
+          <span class="tag c2">Premiere Pro</span>
           <span class="tag c3">After Effects</span>
           <span class="tag c4">Photoshop</span>
           <span class="tag c5">Alight Motion</span>
@@ -1273,6 +1346,22 @@
   </div>
 </section>
 
+<section id="media">
+  <div class="wrap reveal">
+    <div class="eyebrow">creative.showcase/</div>
+    <h2 class="sec-title"><span class="pu">Video &amp; Motion</span> <span class="fn">Showcase</span></h2>
+    <p class="project-intro">Selected video edits, motion graphics, color grading, and visual storytelling work.</p>
+    <div class="media-grid" id="media-list"></div>
+    <form class="upload-form media-upload-form" id="media-form" style="display:none;">
+      <h3>Add Showcase Video</h3>
+      <div class="field-row"><div class="project-field"><label for="media-title">Title</label><input class="project-input" id="media-title" required></div><div class="project-field"><label for="media-platform">Platform</label><input class="project-input" id="media-platform" placeholder="YouTube, Instagram, Vimeo"></div></div>
+      <div class="project-field"><label for="media-url">Video / Reel URL</label><input class="project-input" id="media-url" type="url" placeholder="https://..." required></div>
+      <div class="project-field"><label for="media-description">Description</label><textarea class="project-textarea" id="media-description" placeholder="Editing style, tools, and creative goal"></textarea></div>
+      <button class="project-submit" type="submit">Add Video</button>
+    </form>
+  </div>
+</section>
+
 <section id="projects">
   <div class="wrap reveal">
     <div class="eyebrow">projects/</div>
@@ -1282,10 +1371,6 @@
     <div class="project-layout">
       <div class="project-grid" id="project-list"></div>
 
-      <div class="admin-guard">
-        <button class="admin-toggle" id="admin-unlock" type="button">Admin Access</button>
-        <div class="project-message" id="admin-status" aria-live="polite">Public view enabled</div>
-      </div>
       <form class="upload-form" id="project-form" style="display:none;">
         <h3>Upload New Project</h3>
         <div class="field-row">
@@ -1302,6 +1387,8 @@
           <label for="project-details">Project Highlights</label>
           <textarea class="project-textarea" id="project-details" placeholder="Add one highlight per line" required></textarea>
         </div>
+        <div class="project-field"><label for="project-summary">Problem Statement / Short Description</label><textarea class="project-textarea" id="project-summary" placeholder="What problem does this project solve?"></textarea></div>
+        <div class="project-field"><label for="project-architecture">Architecture</label><input class="project-input" id="project-architecture" type="text" placeholder="e.g. React → REST API → Spring Boot → PostgreSQL"></div>
         <div class="project-attachment-row">
           <div class="project-field">
             <label for="project-code">GitHub / Code Link</label>
@@ -1314,13 +1401,17 @@
         </div>
         <div class="project-attachment-row">
           <div class="project-field">
-            <label for="project-file">Upload File / PDF / Code</label>
-            <input class="project-input" id="project-file" type="file" accept=".pdf,.doc,.docx,.ppt,.pptx,.txt,.zip,.rar,.csv,.json,.js,.java,.py,.html,.css,.xml,.png,.jpg,.jpeg">
+            <label for="project-file">Upload Project / Code Files (multiple)</label>
+            <input class="project-input" id="project-file" type="file" multiple accept=".pdf,.doc,.docx,.ppt,.pptx,.txt,.md,.zip,.rar,.csv,.json,.js,.ts,.jsx,.tsx,.java,.py,.html,.css,.xml,.sql,.c,.cpp,.cs,.php,.png,.jpg,.jpeg,.webp">
           </div>
           <div class="project-field">
             <label for="project-link">Project URL / Demo Link</label>
             <input class="project-input" id="project-link" type="url" placeholder="https://example.com/demo">
           </div>
+        </div>
+        <div class="project-field">
+          <label for="project-resources">More Links (one per line)</label>
+          <textarea class="project-textarea" id="project-resources" placeholder="GitHub | https://github.com/your-repo&#10;Documentation | https://example.com/docs&#10;API | https://example.com/api"></textarea>
         </div>
         <div class="project-attachment-row">
           <div class="project-field">
@@ -1362,6 +1453,7 @@
           <label for="certificate-upload-type">Certificate Type</label>
           <input class="project-input" id="certificate-upload-type" type="text" placeholder="e.g. NPTEL / Internship / Workshop" required>
         </div>
+        <div class="project-field"><label for="certificate-issued-date">Issued Date</label><input class="project-input" id="certificate-issued-date" type="month" required></div>
         <div class="project-field">
           <label for="certificate-upload-file">Upload Certificate Photo / PDF</label>
           <input class="project-input" id="certificate-upload-file" type="file" accept="image/*,.pdf,.jpg,.jpeg,.png,.webp" required>
@@ -1370,6 +1462,7 @@
           <label for="certificate-upload-link">Certificate Link / Verification URL</label>
           <input class="project-input" id="certificate-upload-link" type="url" placeholder="https://example.com/certificate">
         </div>
+        <label class="project-field"><span>Verification Status</span><span><input id="certificate-verified" type="checkbox"> Mark verified after checking the verification URL</span></label>
         <div class="project-field">
           <label for="certificate-upload-password">Add Certificate Password</label>
           <input class="project-input" id="certificate-upload-password" type="password" placeholder="Enter add certificate password" required>
@@ -1502,6 +1595,7 @@
 
 <footer>
   © 2026 Manojkumar Mycharla — built with Java-brained curiosity.
+  <div class="footer-admin"><button class="admin-toggle" id="admin-unlock" type="button">Admin</button><button class="admin-toggle" id="admin-logout" type="button" style="display:none;">Log out</button><div class="project-message" id="admin-status" aria-live="polite"></div></div>
 </footer>
 
 <div class="certificate-modal" id="certificate-modal" aria-hidden="true">
@@ -1756,7 +1850,8 @@
   }
 
   const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if(!prefersReduced){
+  const hasCoarsePointer = window.matchMedia('(pointer: coarse)').matches;
+  if(!prefersReduced && !hasCoarsePointer){
     initFloatingParticles();
     document.addEventListener('pointerdown', (e)=>{
       spawnBurst(e.clientX, e.clientY);
@@ -1786,7 +1881,7 @@
   setTimeout(typeCmd, 500);
 
   // cycling role text (typewriter-style swap)
-  const roles = ["Java Full Stack Developer", "Python Developer", "AI/ML Engineer", "Video Editor", "Content Creator"];
+  const roles = ["Java Full Stack & Python Developer | AI/ML Enthusiast", "Backend Engineer & Visual Content Creator", "Java · Spring Boot · Python · AI/ML"];
   const roleEl = document.getElementById('role-cycle');
   let roleIdx = 0;
   function swapRole(){
@@ -1856,6 +1951,8 @@
       previewImage: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1200&q=80',
       codeUrl: 'https://github.com/manojkumar-devep',
       demoUrl: 'https://mycharla-portfolio.netlify.app',
+      summary: 'A backend application that solves reliable create, read, update, and delete workflows for structured business data.',
+      architecture: 'Architecture: REST controller → service layer → repository → PostgreSQL',
       bullets: [
         'Designed and implemented a CRUD application architecture that improved data management efficiency by 30%.',
         'Built scalable RESTful APIs with Spring Boot, reducing request handling time by 25%.',
@@ -1868,6 +1965,8 @@
       previewImage: 'https://images.unsplash.com/photo-1555949963-aa79dcee981c?auto=format&fit=crop&w=1200&q=80',
       codeUrl: 'https://github.com/manojkumar-devep',
       demoUrl: 'https://mycharla-portfolio.netlify.app',
+      summary: 'An end-to-end prediction workflow that cleans raw records, trains a classifier, and presents actionable evaluation results.',
+      architecture: 'Architecture: Pandas preprocessing → scikit-learn pipeline → model evaluation → Matplotlib insights',
       bullets: [
         'Built a machine learning workflow that achieved 92% classification accuracy across 1,200+ records.',
         'Reduced preprocessing time by 40% using Pandas and scikit-learn pipelines for cleaner model training.',
@@ -1878,43 +1977,67 @@
 
   const projectStorageKey = 'myPortfolioProjects';
   const certificateStorageKey = 'myPortfolioCertificates';
+  const certificateApiUrl = '/.netlify/functions/certificates';
+  const mediaStorageKey = 'myPortfolioMedia';
+  const showcaseApiUrl = '/.netlify/functions/showcase';
   const projectListEl = document.getElementById('project-list');
   const projectFormEl = document.getElementById('project-form');
   const certificateListEl = document.getElementById('certificate-list');
   const certificateFormEl = document.getElementById('certificate-form');
+  const mediaListEl = document.getElementById('media-list');
+  const mediaFormEl = document.getElementById('media-form');
   const adminUnlockBtn = document.getElementById('admin-unlock');
   const adminStatusEl = document.getElementById('admin-status');
-  const projectUploadPassword = 'manoj2005';
+  const adminLogoutBtn = document.getElementById('admin-logout');
+  const projectUploadPasswordHash = 'cb13a717bf8373e3af8204bcd27d83936a0f5a9675c37b15859d0c31b83938c8';
+  async function isValidAdminPassword(value){
+    const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(value));
+    return Array.from(new Uint8Array(digest)).map(byte => byte.toString(16).padStart(2,'0')).join('') === projectUploadPasswordHash;
+  }
 
   function applyAdminVisibility(){
-    const isAdmin = localStorage.getItem('portfolio-admin') === 'true';
+    const isAdmin = sessionStorage.getItem('portfolio-admin') === 'true';
     if(projectFormEl){
       projectFormEl.style.display = isAdmin ? 'grid' : 'none';
     }
     if(certificateFormEl){
       certificateFormEl.style.display = isAdmin ? 'grid' : 'none';
     }
+    if(mediaFormEl){ mediaFormEl.style.display = isAdmin ? 'grid' : 'none'; }
     if(adminUnlockBtn){
       adminUnlockBtn.style.display = isAdmin ? 'none' : 'inline-flex';
     }
+    if(adminLogoutBtn){ adminLogoutBtn.style.display = isAdmin ? 'inline-flex' : 'none'; }
     if(adminStatusEl){
       adminStatusEl.textContent = isAdmin ? 'Admin mode enabled' : 'Public view enabled';
     }
+    if(typeof renderMedia === 'function'){ renderMedia(); }
+    if(typeof renderProjects === 'function'){ renderProjects(); }
+    if(typeof renderCertificates === 'function'){ renderCertificates(); }
+  }
+
+  if(adminLogoutBtn){
+    adminLogoutBtn.addEventListener('click', () => {
+      sessionStorage.removeItem('portfolio-admin');
+      sessionStorage.removeItem('portfolio-admin-password');
+      applyAdminVisibility();
+    });
   }
 
   if(adminUnlockBtn){
-    adminUnlockBtn.addEventListener('click', () => {
+    adminUnlockBtn.addEventListener('click', async () => {
       const entered = window.prompt('Enter admin password');
-      if (entered === projectUploadPassword) {
-        localStorage.setItem('portfolio-admin', 'true');
+      if (entered !== null && await isValidAdminPassword(entered)) {
+        sessionStorage.setItem('portfolio-admin', 'true');
+        sessionStorage.setItem('portfolio-admin-password', entered);
         applyAdminVisibility();
+        migrateLocalCertificates(entered);
+        migrateLocalMedia(entered);
       } else if (entered !== null) {
         if(adminStatusEl){ adminStatusEl.textContent = 'Access denied'; }
       }
     });
   }
-
-  applyAdminVisibility();
 
   function loadProjects(){
     try {
@@ -1948,6 +2071,138 @@
 
   function saveCertificates(certificates){
     localStorage.setItem(certificateStorageKey, JSON.stringify(certificates));
+  }
+
+  let certificateCache = loadCertificates();
+
+  async function refreshCertificates(){
+    try {
+      const response = await fetch(certificateApiUrl, { cache: 'no-store' });
+      if(!response.ok) throw new Error('Unable to load shared certificates.');
+      certificateCache = await response.json();
+      renderCertificates();
+    } catch (err) {
+      console.warn('Shared certificate storage is unavailable; using this browser cache.', err);
+      certificateCache = loadCertificates();
+      renderCertificates();
+    }
+  }
+
+  async function migrateLocalCertificates(password){
+    const localCertificates = loadCertificates();
+    if(!localCertificates.length) return refreshCertificates();
+    try {
+      for(const item of localCertificates){
+        const certificate = { ...item, id: item.id || crypto.randomUUID() };
+        const response = await fetch(certificateApiUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ password, certificate })
+        });
+        if(!response.ok) throw new Error('Unable to migrate a certificate.');
+      }
+      localStorage.removeItem(certificateStorageKey);
+      await refreshCertificates();
+    } catch (err) {
+      showCertificatePasswordMessage('Could not publish saved certificates. Please try again.');
+      console.error(err);
+    }
+  }
+
+  function loadMedia(){
+    try { return JSON.parse(localStorage.getItem(mediaStorageKey) || '[]'); }
+    catch (err) { console.warn('Unable to read saved media', err); return []; }
+  }
+
+  function saveMedia(items){ localStorage.setItem(mediaStorageKey, JSON.stringify(items)); }
+
+  let mediaCache = loadMedia();
+  applyAdminVisibility();
+
+  async function refreshMedia(){
+    try {
+      const response = await fetch(showcaseApiUrl, { cache: 'no-store' });
+      if(!response.ok) throw new Error('Unable to load shared showcase.');
+      mediaCache = await response.json();
+      renderMedia();
+    } catch (err) {
+      console.warn('Shared showcase storage is unavailable; using this browser cache.', err);
+      mediaCache = loadMedia();
+      renderMedia();
+    }
+  }
+
+  async function migrateLocalMedia(password){
+    const localItems = loadMedia();
+    if(!localItems.length) return refreshMedia();
+    try {
+      for(const savedItem of localItems){
+        const item = { ...savedItem, id: savedItem.id || crypto.randomUUID() };
+        const response = await fetch(showcaseApiUrl, {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ password, item })
+        });
+        if(!response.ok) throw new Error('Unable to migrate a showcase item.');
+      }
+      localStorage.removeItem(mediaStorageKey);
+      await refreshMedia();
+    } catch (err) {
+      console.error(err);
+      window.alert('Could not publish saved showcase videos. Please try again.');
+    }
+  }
+
+  function youtubeEmbedUrl(url){
+    try {
+      const parsed = new URL(url);
+      if(parsed.hostname.includes('youtu.be')) return 'https://www.youtube.com/embed/' + parsed.pathname.slice(1);
+      if(parsed.hostname.includes('youtube.com')){
+        const id = parsed.searchParams.get('v') || parsed.pathname.split('/').filter(Boolean).pop();
+        return id ? 'https://www.youtube.com/embed/' + id : '';
+      }
+    } catch (err) { return ''; }
+    return '';
+  }
+
+  function renderMedia(){
+    if(!mediaListEl) return;
+    const items = mediaCache;
+    const isAdmin = sessionStorage.getItem('portfolio-admin') === 'true';
+    mediaListEl.innerHTML = items.length ? '' : '<div class="media-empty">Video showcase is ready. Add YouTube, Instagram, Vimeo, or portfolio links through Admin.</div>';
+    items.forEach((item, index) => {
+      const card = document.createElement('article');
+      card.className = 'media-card';
+      const embedUrl = youtubeEmbedUrl(item.url || '');
+      const media = embedUrl
+        ? '<iframe class="media-embed" src="' + escapeHtml(embedUrl) + '" title="' + escapeHtml(item.title || 'Showcase video') + '" loading="lazy" allowfullscreen></iframe>'
+        : '<a class="project-action-btn" href="' + escapeHtml(item.url || '#') + '" target="_blank" rel="noopener noreferrer">Open ' + escapeHtml(item.platform || 'Video') + '</a>';
+      const remove = isAdmin ? '<button class="project-delete" type="button" data-media-id="' + escapeHtml(item.id || '') + '">Delete Showcase</button>' : '';
+      card.innerHTML = media + '<h3>' + escapeHtml(item.title || 'Untitled edit') + '</h3><p>' + escapeHtml(item.description || item.platform || '') + '</p>' + remove;
+      mediaListEl.appendChild(card);
+    });
+  }
+
+  if(mediaFormEl){
+    mediaFormEl.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const password = sessionStorage.getItem('portfolio-admin-password') || '';
+      const item = { id: crypto.randomUUID(), title: document.getElementById('media-title').value.trim(), platform: document.getElementById('media-platform').value.trim(), url: document.getElementById('media-url').value.trim(), description: document.getElementById('media-description').value.trim() };
+      fetch(showcaseApiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ password, item }) })
+        .then(response => { if(!response.ok) throw new Error('Upload failed.'); mediaFormEl.reset(); return refreshMedia(); })
+        .catch(err => { console.error(err); window.alert('Admin login is required to add a showcase video.'); });
+    });
+  }
+
+  if(mediaListEl){
+    mediaListEl.addEventListener('click', (event) => {
+      const button = event.target.closest('[data-media-id]');
+      if(!button || sessionStorage.getItem('portfolio-admin') !== 'true') return;
+      if(!window.confirm('Delete this video or motion showcase? This cannot be undone.')) return;
+      const password = sessionStorage.getItem('portfolio-admin-password') || '';
+      fetch(showcaseApiUrl, { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ password, id: button.dataset.mediaId }) })
+        .then(response => { if(!response.ok) throw new Error('Delete failed.'); return refreshMedia(); })
+        .catch(err => { console.error(err); window.alert('Showcase item could not be deleted.'); });
+    });
   }
 
   function initProjectTouchEffects(){
@@ -1984,6 +2239,7 @@
 
   function renderProjects(){
     const projects = loadProjects();
+    const isAdmin = sessionStorage.getItem('portfolio-admin') === 'true';
     projectListEl.innerHTML = '';
     projects.forEach((project, index) => {
       const card = document.createElement('div');
@@ -1992,6 +2248,11 @@
       const safeTitle = escapeHtml(project.title || 'Untitled Project');
       const safeStack = (project.stack || '').split('·').map(part => part.trim()).filter(Boolean).map(part => '<span>' + escapeHtml(part) + '</span>').join(' · ');
       const bullets = (project.bullets || []).map(item => '<li>' + escapeHtml(item) + '</li>').join('');
+      const defaultMatch = defaultProjects.find(item => item.title === project.title) || {};
+      const summary = project.summary || defaultMatch.summary || '';
+      const architecture = project.architecture || defaultMatch.architecture || '';
+      const summaryMarkup = summary ? '<p class="project-summary">' + escapeHtml(summary) + '</p>' : '';
+      const architectureMarkup = architecture ? '<p class="project-architecture">' + escapeHtml(architecture) + '</p>' : '';
       const preview = project.previewImage ? `<div class="project-preview"><img src="${escapeHtml(project.previewImage)}" alt="${safeTitle} preview"></div>` : `
         <div class="project-preview project-preview-fallback">
           <div class="preview-window">
@@ -1999,20 +2260,25 @@
             <div class="preview-window-lines"><span></span><span></span><span></span><span></span></div>
           </div>
         </div>`;
-      const attachmentName = project.attachmentName ? '<div class="project-attachment">📎 <a href="' + escapeHtml(project.attachmentData || '#') + '" target="_blank" rel="noopener noreferrer" download="' + escapeHtml(project.attachmentName) + '">' + escapeHtml(project.attachmentName) + '</a></div>' : '';
+      const legacyAttachment = project.attachmentName ? [{ name: project.attachmentName, data: project.attachmentData || '#' }] : [];
+      const projectFiles = Array.isArray(project.attachments) ? project.attachments : legacyAttachment;
+      const attachmentName = projectFiles.map(file => '<div class="project-attachment">📎 <a href="' + escapeHtml(file.data || '#') + '" target="_blank" rel="noopener noreferrer" download="' + escapeHtml(file.name || 'Project file') + '">' + escapeHtml(file.name || 'Project file') + '</a></div>').join('');
       const certificateAttachmentName = project.certificateAttachmentName ? '<div class="project-attachment">🪪 <a href="' + escapeHtml(project.certificateAttachmentData || '#') + '" target="_blank" rel="noopener noreferrer" download="' + escapeHtml(project.certificateAttachmentName) + '">' + escapeHtml(project.certificateAttachmentName) + '</a></div>' : '';
       const attachmentUrl = project.attachmentUrl ? '<div class="project-attachment"><a href="' + escapeHtml(project.attachmentUrl) + '" target="_blank" rel="noopener noreferrer">🔗 Open project link</a></div>' : '';
       const codeButton = project.codeUrl ? '<a class="project-action-btn" href="' + escapeHtml(project.codeUrl) + '" target="_blank" rel="noopener noreferrer">View Code</a>' : '';
-      const demoButton = project.demoUrl ? '<a class="project-action-btn alt" href="' + escapeHtml(project.demoUrl) + '" target="_blank" rel="noopener noreferrer">Live Demo</a>' : '';
-      const deleteButton = project.isAdded ? '<button class="project-delete" type="button" data-index="' + index + '">Delete Project</button>' : '';
+      const isPortfolioUrl = /mycharla-portfolio\.netlify\.app/i.test(project.demoUrl || '');
+      const demoButton = project.demoUrl ? '<a class="project-action-btn alt" href="' + escapeHtml(project.demoUrl) + '" target="_blank" rel="noopener noreferrer">' + (isPortfolioUrl ? 'Portfolio Overview' : 'Live Demo') + '</a>' : '';
+      const resourceButtons = (Array.isArray(project.resources) ? project.resources : []).map(resource => '<a class="project-action-btn alt" href="' + escapeHtml(resource.url || '#') + '" target="_blank" rel="noopener noreferrer">' + escapeHtml(resource.label || 'Open Link') + '</a>').join('');
+      const deleteButton = project.isAdded && isAdmin ? '<button class="project-delete" type="button" data-index="' + index + '">Delete Project</button>' : '';
       card.innerHTML = `
         <div class="project-head">
           <div class="project-title">${safeTitle}</div>
           <div class="project-stack">${safeStack}</div>
         </div>
         ${preview}
+        ${summaryMarkup}${architectureMarkup}
         <ul class="project-list">${bullets}</ul>
-        <div class="project-actions">${codeButton}${demoButton}</div>
+        <div class="project-actions">${codeButton}${demoButton}${resourceButtons}</div>
         ${attachmentName}${certificateAttachmentName}${attachmentUrl}
         ${deleteButton}
       `;
@@ -2022,7 +2288,9 @@
   }
 
   function renderCertificates(){
-    const certificates = loadCertificates();
+    const allCertificates = certificateCache;
+    const hasRealCertificate = allCertificates.some(item => !/unstop certificate/i.test(item.title || ''));
+    const certificates = hasRealCertificate ? allCertificates.filter(item => !/unstop certificate/i.test(item.title || '')) : allCertificates;
     if(!certificateListEl) return;
     certificateListEl.innerHTML = '';
 
@@ -2031,14 +2299,19 @@
       return;
     }
 
-    const isAdmin = localStorage.getItem('portfolio-admin') === 'true';
+    const isAdmin = sessionStorage.getItem('portfolio-admin') === 'true';
     certificates.forEach((certificate, index) => {
+      index = allCertificates.indexOf(certificate);
       const card = document.createElement('div');
       card.className = 'certificate-card';
-      const title = escapeHtml(certificate.title || 'Certificate');
-      const type = escapeHtml(certificate.type || 'Certificate');
+      const correctedTitle = String(certificate.title || 'Certificate').replace(/Cyberssecurity/gi, 'Cybersecurity');
+      const correctedType = String(certificate.type || 'Certificate').replace(/Cyberssecurity/gi, 'Cybersecurity');
+      const title = escapeHtml(correctedTitle);
+      const type = escapeHtml(correctedType);
       const fileUrl = certificate.fileData || certificate.fileUrl || '';
       const linkUrl = certificate.linkUrl || '';
+      const issuedDate = certificate.issuedDate ? new Date(certificate.issuedDate + '-02').toLocaleDateString(undefined, {month:'short',year:'numeric'}) : 'Date not specified';
+      const verifiedBadge = certificate.verified && linkUrl ? '<span class="verified-badge" title="Credential verification link confirmed">✓ Verified</span>' : '';
       const mediaIsPdf = /\.pdf($|[?#])/i.test(fileUrl) || certificate.fileType === 'pdf';
       const mediaMarkup = fileUrl
         ? mediaIsPdf
@@ -2046,13 +2319,14 @@
           : `<img src="${escapeHtml(fileUrl)}" alt="${title}">`
         : '<div class="certificate-empty">Preview unavailable</div>';
       const linkMarkup = linkUrl ? `<a class="project-action-btn alt" href="${escapeHtml(linkUrl)}" target="_blank" rel="noopener noreferrer">Open Link</a>` : '';
-      const deleteButton = isAdmin ? `<button class="project-delete" type="button" data-certificate-index="${index}">Delete Certificate</button>` : '';
+      const deleteButton = isAdmin ? `<button class="project-delete" type="button" data-certificate-id="${escapeHtml(certificate.id || '')}">Delete Certificate</button>` : '';
       const previewButton = `<button class="certificate-view-btn" type="button" data-preview-title="${escapeHtml(title)}" data-preview-url="${escapeHtml(fileUrl)}" data-preview-type="${escapeHtml(certificate.fileType || '')}" data-preview-link="${escapeHtml(linkUrl)}">Preview</button>`;
 
       card.innerHTML = `
         <div class="certificate-media">${mediaMarkup}</div>
         <div class="certificate-title">${title}</div>
         <div class="certificate-type">${type}</div>
+        <div class="certificate-meta"><span>Issued: ${escapeHtml(issuedDate)}</span>${verifiedBadge}</div>
         <div class="project-actions">${linkMarkup}${previewButton}</div>
         ${deleteButton}
       `;
@@ -2102,12 +2376,13 @@
 
   projectListEl.addEventListener('click', (e)=>{
     const deleteButton = e.target.closest('.project-delete');
-    if(!deleteButton) return;
+    if(!deleteButton || sessionStorage.getItem('portfolio-admin') !== 'true') return;
     const index = Number(deleteButton.dataset.index);
     if(Number.isNaN(index)) return;
     const projects = loadProjects();
     const removeTarget = projects[index];
-    if(!removeTarget || !removeTarget.isAdded){ return; }
+    if(!removeTarget || !removeTarget.isAdded) return;
+    if(!window.confirm('Delete this uploaded project? This cannot be undone.')) return;
     projects.splice(index, 1);
     saveProjects(projects);
     renderProjects();
@@ -2116,12 +2391,17 @@
   certificateListEl.addEventListener('click', (e)=>{
     const deleteButton = e.target.closest('.project-delete');
     if(deleteButton){
-      const index = Number(deleteButton.dataset.certificateIndex);
-      if(Number.isNaN(index)) return;
-      const certificates = loadCertificates();
-      certificates.splice(index, 1);
-      saveCertificates(certificates);
-      renderCertificates();
+      if(sessionStorage.getItem('portfolio-admin') !== 'true') return;
+      if(!window.confirm('Delete this certificate? This cannot be undone.')) return;
+      const password = sessionStorage.getItem('portfolio-admin-password') || '';
+      fetch(certificateApiUrl, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password, id: deleteButton.dataset.certificateId })
+      }).then(response => {
+        if(!response.ok) throw new Error('Unable to delete certificate.');
+        return refreshCertificates();
+      }).catch(err => { console.error(err); window.alert('Certificate could not be deleted.'); });
       return;
     }
 
@@ -2152,9 +2432,11 @@
     const password = document.getElementById('certificate-upload-password').value.trim();
     const file = document.getElementById('certificate-upload-file').files[0];
     const linkUrl = document.getElementById('certificate-upload-link').value.trim();
+    const issuedDate = document.getElementById('certificate-issued-date').value;
+    const verified = document.getElementById('certificate-verified').checked && Boolean(linkUrl);
 
     if(!title || !type || !file || !password){ return; }
-    if(password !== projectUploadPassword){
+    if(!(await isValidAdminPassword(password))){
       showCertificatePasswordMessage('Incorrect add certificate password.');
       return;
     }
@@ -2167,17 +2449,27 @@
       reader.readAsDataURL(file);
     });
 
-    const certificates = loadCertificates();
-    certificates.unshift({
+    const certificate = {
       title,
       type,
       fileData,
       fileType: file.type.includes('pdf') ? 'pdf' : 'image',
       linkUrl,
-      uploadedAt: new Date().toISOString()
+      issuedDate,
+      verified,
+      uploadedAt: new Date().toISOString(),
+      id: crypto.randomUUID()
+    };
+    const response = await fetch(certificateApiUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password, certificate })
     });
-    saveCertificates(certificates);
-    renderCertificates();
+    if(!response.ok){
+      showCertificatePasswordMessage('Upload failed. Please try again.');
+      return;
+    }
+    await refreshCertificates();
     certificateFormEl.reset();
     showCertificatePasswordMessage('');
   });
@@ -2187,31 +2479,29 @@
     const title = document.getElementById('project-title').value.trim();
     const stack = document.getElementById('project-stack').value.trim();
     const details = document.getElementById('project-details').value.trim();
+    const summary = document.getElementById('project-summary').value.trim();
+    const architecture = document.getElementById('project-architecture').value.trim();
     const password = document.getElementById('project-password').value.trim();
-    const attachmentFile = document.getElementById('project-file').files[0];
+    const attachmentFiles = Array.from(document.getElementById('project-file').files);
     const certificateFile = document.getElementById('certificate-file').files[0];
     const certificateTitle = document.getElementById('certificate-title').value.trim();
     const attachmentUrl = document.getElementById('project-link').value.trim();
     const codeUrl = document.getElementById('project-code').value.trim();
     const previewUrl = document.getElementById('project-preview').value.trim();
+    const resourcesText = document.getElementById('project-resources').value.trim();
     if(!title || !stack || !details || !password){ return; }
-    if(password !== projectUploadPassword){
+    if(!(await isValidAdminPassword(password))){
       showProjectPasswordMessage('Incorrect add project password.');
       return;
     }
     showProjectPasswordMessage('');
 
-    let attachmentData = '';
-    let attachmentName = '';
-    if(attachmentFile){
-      attachmentName = attachmentFile.name;
-      attachmentData = await new Promise((resolve, reject) => {
+    const attachments = await Promise.all(attachmentFiles.map(file => new Promise((resolve, reject) => {
         const reader = new FileReader();
-        reader.onload = () => resolve(reader.result || '');
+        reader.onload = () => resolve({ name: file.name, data: reader.result || '', type: file.type || '' });
         reader.onerror = () => reject(new Error('Unable to read the selected file.'));
-        reader.readAsDataURL(attachmentFile);
-      });
-    }
+        reader.readAsDataURL(file);
+      })));
 
     let certificateAttachmentData = '';
     let certificateAttachmentName = '';
@@ -2227,12 +2517,20 @@
 
     const projects = loadProjects();
     const bullets = details.split('\n').map(line => line.trim()).filter(Boolean);
+    const resources = resourcesText.split('\n').map(line => line.trim()).filter(Boolean).map((line, index) => {
+      const separatorIndex = line.indexOf('|');
+      return separatorIndex === -1
+        ? { label: 'Resource ' + (index + 1), url: line }
+        : { label: line.slice(0, separatorIndex).trim() || 'Resource ' + (index + 1), url: line.slice(separatorIndex + 1).trim() };
+    }).filter(resource => /^https?:\/\//i.test(resource.url));
     projects.unshift({
       title,
       stack,
       bullets,
-      attachmentName,
-      attachmentData,
+      summary,
+      architecture,
+      attachments,
+      resources,
       certificateAttachmentName,
       certificateAttachmentData,
       attachmentUrl: attachmentUrl || '',
@@ -2254,7 +2552,9 @@
   });
 
   renderProjects();
-  renderCertificates();
+  refreshCertificates();
+  refreshMedia();
+  renderMedia();
 </script>
 </body>
 </html>
